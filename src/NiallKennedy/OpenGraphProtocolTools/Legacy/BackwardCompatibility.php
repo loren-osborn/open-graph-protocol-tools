@@ -12,6 +12,7 @@ namespace NiallKennedy\OpenGraphProtocolTools\Legacy;
 
 use NiallKennedy\OpenGraphProtocolTools\Utils\Inflector;
 use Exception;
+use ReflectionClass;
 
 /**
  * Ploxy object to provide backward compatibility
@@ -25,97 +26,35 @@ class BackwardCompatibility
     private $proxiedObject;
     private static $classCreationChecklist = array();
 
-    private static function getLegacyClasses()
+    private static function getLegacyClassNameMap()
     {
         return array(
-            self::PACKAGE_NAMESPACE . '\\Media\\OpenGraphProtocolMedia' => array(
-                'name'        => self::PACKAGE_NAMESPACE . '\\Media\\OpenGraphProtocolMedia',
-                'legacy_name' => 'OpenGraphProtocolMedia',
-                'abstract'    => true
-            ),
-            self::PACKAGE_NAMESPACE . '\\Media\\OpenGraphProtocolAudio' => array(
-                'name'        => self::PACKAGE_NAMESPACE . '\\Media\\OpenGraphProtocolAudio',
-                'legacy_name' => 'OpenGraphProtocolAudio',
-                'parent'      => self::PACKAGE_NAMESPACE . '\\Media\\OpenGraphProtocolMedia',
-                'abstract'    => false
-            ),
-            self::PACKAGE_NAMESPACE . '\\Media\\OpenGraphProtocolVisualMedia' => array(
-                'name'        => self::PACKAGE_NAMESPACE . '\\Media\\OpenGraphProtocolVisualMedia',
-                'legacy_name' => 'OpenGraphProtocolVisualMedia',
-                'parent'      => self::PACKAGE_NAMESPACE . '\\Media\\OpenGraphProtocolMedia',
-                'abstract'    => true
-            ),
-            self::PACKAGE_NAMESPACE . '\\Media\\OpenGraphProtocolImage' => array(
-                'name'        => self::PACKAGE_NAMESPACE . '\\Media\\OpenGraphProtocolImage',
-                'legacy_name' => 'OpenGraphProtocolImage',
-                'parent'      => self::PACKAGE_NAMESPACE . '\\Media\\OpenGraphProtocolVisualMedia',
-                'abstract'    => false
-            ),
-            self::PACKAGE_NAMESPACE . '\\Media\\OpenGraphProtocolVideo' => array(
-                'name'        => self::PACKAGE_NAMESPACE . '\\Media\\OpenGraphProtocolVideo',
-                'legacy_name' => 'OpenGraphProtocolVideo',
-                'parent'      => self::PACKAGE_NAMESPACE . '\\Media\\OpenGraphProtocolVisualMedia',
-                'abstract'    => false
-            ),
-            self::PACKAGE_NAMESPACE . '\\Objects\\OpenGraphProtocolObject' => array(
-                'name'        => self::PACKAGE_NAMESPACE . '\\Objects\\OpenGraphProtocolObject',
-                'legacy_name' => 'OpenGraphProtocolObject',
-                'abstract'    => true
-            ),
-            self::PACKAGE_NAMESPACE . '\\Objects\\OpenGraphProtocolArticle' => array(
-                'name'        => self::PACKAGE_NAMESPACE . '\\Objects\\OpenGraphProtocolArticle',
-                'legacy_name' => 'OpenGraphProtocolArticle',
-                'parent'      => self::PACKAGE_NAMESPACE . '\\Objects\\OpenGraphProtocolObject',
-                'abstract'    => false
-            ),
-            self::PACKAGE_NAMESPACE . '\\Objects\\OpenGraphProtocolBook' => array(
-                'name'        => self::PACKAGE_NAMESPACE . '\\Objects\\OpenGraphProtocolBook',
-                'legacy_name' => 'OpenGraphProtocolBook',
-                'parent'      => self::PACKAGE_NAMESPACE . '\\Objects\\OpenGraphProtocolObject',
-                'abstract'    => false
-            ),
-            self::PACKAGE_NAMESPACE . '\\Objects\\OpenGraphProtocolProfile' => array(
-                'name'        => self::PACKAGE_NAMESPACE . '\\Objects\\OpenGraphProtocolProfile',
-                'legacy_name' => 'OpenGraphProtocolProfile',
-                'parent'      => self::PACKAGE_NAMESPACE . '\\Objects\\OpenGraphProtocolObject',
-                'abstract'    => false
-            ),
-            self::PACKAGE_NAMESPACE . '\\Objects\\OpenGraphProtocolVideoObject' => array(
-                'name'        => self::PACKAGE_NAMESPACE . '\\Objects\\OpenGraphProtocolVideoObject',
-                'legacy_name' => 'OpenGraphProtocolVideoObject',
-                'parent'      => self::PACKAGE_NAMESPACE . '\\Objects\\OpenGraphProtocolObject',
-                'abstract'    => false
-            ),
-            self::PACKAGE_NAMESPACE . '\\Objects\\OpenGraphProtocolVideoEpisode' => array(
-                'name'        => self::PACKAGE_NAMESPACE . '\\Objects\\OpenGraphProtocolVideoEpisode',
-                'legacy_name' => 'OpenGraphProtocolVideoEpisode',
-                'parent'      => self::PACKAGE_NAMESPACE . '\\Objects\\OpenGraphProtocolVideoObject',
-                'abstract'    => false
-            ),
-            self::PACKAGE_NAMESPACE . '\\OpenGraphProtocol' => array(
-                'name'        => self::PACKAGE_NAMESPACE . '\\OpenGraphProtocol',
-                'legacy_name' => 'OpenGraphProtocol',
-                'abstract'    => false
-            )
+            self::PACKAGE_NAMESPACE . '\\Media\\OpenGraphProtocolMedia'          => 'OpenGraphProtocolMedia',
+            self::PACKAGE_NAMESPACE . '\\Media\\OpenGraphProtocolAudio'          => 'OpenGraphProtocolAudio',
+            self::PACKAGE_NAMESPACE . '\\Media\\OpenGraphProtocolVisualMedia'    => 'OpenGraphProtocolVisualMedia',
+            self::PACKAGE_NAMESPACE . '\\Media\\OpenGraphProtocolImage'          => 'OpenGraphProtocolImage',
+            self::PACKAGE_NAMESPACE . '\\Media\\OpenGraphProtocolVideo'          => 'OpenGraphProtocolVideo',
+            self::PACKAGE_NAMESPACE . '\\Objects\\OpenGraphProtocolObject'       => 'OpenGraphProtocolObject',
+            self::PACKAGE_NAMESPACE . '\\Objects\\OpenGraphProtocolArticle'      => 'OpenGraphProtocolArticle',
+            self::PACKAGE_NAMESPACE . '\\Objects\\OpenGraphProtocolBook'         => 'OpenGraphProtocolBook',
+            self::PACKAGE_NAMESPACE . '\\Objects\\OpenGraphProtocolProfile'      => 'OpenGraphProtocolProfile',
+            self::PACKAGE_NAMESPACE . '\\Objects\\OpenGraphProtocolVideoObject'  => 'OpenGraphProtocolVideoObject',
+            self::PACKAGE_NAMESPACE . '\\Objects\\OpenGraphProtocolVideoEpisode' => 'OpenGraphProtocolVideoEpisode',
+            self::PACKAGE_NAMESPACE . '\\OpenGraphProtocol'                      => 'OpenGraphProtocol'
         );
     }
 
     protected function __construct($objectToProxy)
     {
-        $legacyClasses = self::getLegacyClasses();
-        if (!array_key_exists(get_class($objectToProxy), $legacyClasses)) {
+        $legacyClassNameMap = self::getLegacyClassNameMap();
+        if (!array_key_exists(get_class($objectToProxy), $legacyClassNameMap)) {
             throw new Exception('Internal error: unknown class: ' . get_class($objectToProxy));
-        }
-        if ($legacyClasses[get_class($objectToProxy)]['abstract']) {
-            throw new Exception('Internal error: should not be able to create abstract class object for class ' . get_class($objectToProxy));
         }
         $this->proxiedObject = $objectToProxy;
     }
 
     public function __call($name, $arguments)
     {
-        $legacyClasses = self::getLegacyClasses();
-        $classInfo     = $legacyClasses[get_class($this->proxiedObject)];
         if (method_exists($this->proxiedObject, $name)) {
             $cleanArgs = self::cleanProxyCallArgs(get_class($this->proxiedObject), $name, $arguments);
             $rawResults = call_user_func_array(array($this->proxiedObject, $name), $cleanArgs);
@@ -155,8 +94,6 @@ class BackwardCompatibility
 
     protected static function callStaticInternal($name, $arguments, $className)
     {
-        $legacyClasses = self::getLegacyClasses();
-        $classInfo     = $legacyClasses[$className];
         $inflectedName = Inflector::inflect($name, Inflector::INFLECTION_LOWERCASE_WITH_UNDERSCORE_SEPARATORS, Inflector::INFLECTION_CAMEL_CASE);
         if (method_exists($className, $inflectedName)) {
             $result = forward_static_call_array(array($className, $inflectedName), $arguments);
@@ -168,35 +105,45 @@ class BackwardCompatibility
 
     public static function createProxyClasses()
     {
-        $legacyClasses = self::getLegacyClasses();
-        foreach ($legacyClasses as $classInfo) {
-            if (!array_key_exists($classInfo['name'], self::$classCreationChecklist)) {
-                self::createProxyClass($classInfo, $legacyClasses);
+        $legacyClassNameMap = self::getLegacyClassNameMap();
+        foreach ($legacyClassNameMap as $className => $legacyClassName) {
+            if (!array_key_exists($className, self::$classCreationChecklist)) {
+                self::createProxyClass($className, $legacyClassName, $legacyClassNameMap);
             }
         }
     }
 
-    private static function createProxyClass($classInfo, $legacyClasses)
+    private static function createProxyClass($className, $legacyClassName, $legacyClassNameMap)
     {
-        if (array_key_exists('parent', $classInfo) && !array_key_exists($classInfo['parent'], self::$classCreationChecklist)) {
-            self::createProxyClass($legacyClasses[$classInfo['parent']], $legacyClasses);
+        $reflection = new ReflectionClass($className);
+        $parent     = __CLASS__;
+        if ($reflection->getParentClass()) {
+            $parentClassName = $reflection->getParentClass()->getName();
+            if (!array_key_exists($parentClassName, self::$classCreationChecklist)) {
+                self::createProxyClass($legacyClassNameMap[$parentClassName], $parentClassName, $legacyClassNameMap);
+            }
+            $parent = $legacyClassNameMap[$parentClassName];
         }
-        $parent = array_key_exists('parent', $classInfo) ? $legacyClasses[$classInfo['parent']]['legacy_name'] : __CLASS__;
-        $abstract = $classInfo['abstract'] ? 'abstract' : '';
-        $source =
-            "{$abstract} class {$classInfo['legacy_name']} extends {$parent}" .
+        $abstract  = $reflection->isAbstract() ? 'abstract' : '';
+        $constants = '';
+        foreach ($reflection->getConstants() as $constName => $constValue) {
+            $constants .= "const {$constName} = " . var_export($constValue, true) . '; ';
+        }
+        $compatibilityClassSource =
+            "{$abstract} class {$legacyClassName} extends {$parent}" .
             '{ ' .
+                $constants .
                 /* No legacy classes have constructors that take arguments. */
                 'public function __construct() ' .
                 '{' .
-                    __CLASS__ . '::__construct(new ' . $classInfo['name'] . '());' .
+                    __CLASS__ . '::__construct(new ' . $className . '());' .
                 '} ' .
                 'static public function __callStatic($name, $arguments) ' .
                 '{' .
-                    'return ' . __CLASS__ . '::callStaticInternal($name, $arguments, \'' . preg_replace('/\\\\/', '\\\\', $classInfo['name']) . '\');' .
+                    'return ' . __CLASS__ . '::callStaticInternal($name, $arguments, \'' . preg_replace('/\\\\/', '\\\\', $className) . '\');' .
                 '}' .
             '}';
-        eval($source);
-        self::$classCreationChecklist[$classInfo['name']] = true;
+        eval($compatibilityClassSource);
+        self::$classCreationChecklist[$className] = true;
     }
 }

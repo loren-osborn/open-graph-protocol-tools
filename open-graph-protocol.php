@@ -16,6 +16,6 @@
 
 /* The following line is an intentional PSR-1 violation */
 trigger_error('Please configure NiallKennedy\\OpenGraphProtocolTools with your autoloader', E_USER_DEPRECATED);
-require_once dirname(__FILE__) . '/autoload.php';
+require_once dirname(__FILE__) . '/bootstrap.php';
 
 \NiallKennedy\OpenGraphProtocolTools\Legacy\BackwardCompatibility::createProxyClasses();
