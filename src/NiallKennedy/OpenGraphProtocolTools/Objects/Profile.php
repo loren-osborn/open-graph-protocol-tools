@@ -15,7 +15,7 @@ namespace NiallKennedy\OpenGraphProtocolTools\Objects;
  *
  * @link http://ogp.me/ Open Graph protocol
  */
-class OpenGraphProtocolProfile extends OpenGraphProtocolObject
+class Profile extends Object
 {
     /**
      * Property prefix

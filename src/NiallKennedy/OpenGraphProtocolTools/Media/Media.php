@@ -18,7 +18,7 @@ use NiallKennedy\OpenGraphProtocolTools\OpenGraphProtocol;
  *
  * @link http://ogp.me/#structured Open Graph protocol structured properties
  */
-abstract class OpenGraphProtocolMedia
+abstract class Media
 {
     /**
      * HTTP scheme URL

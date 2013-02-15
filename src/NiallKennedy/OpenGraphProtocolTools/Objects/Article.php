@@ -17,7 +17,7 @@ use DateTime;
  *
  * @link http://ogp.me/ Open Graph protocol
  */
-class OpenGraphProtocolArticle extends OpenGraphProtocolObject
+class Article extends Object
 {
     /**
      * Property prefix

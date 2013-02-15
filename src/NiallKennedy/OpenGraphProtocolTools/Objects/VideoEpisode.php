@@ -15,7 +15,7 @@ namespace NiallKennedy\OpenGraphProtocolTools\Objects;
  *
  * @link http://ogp.me/#type_video.episode Video episode
  */
-class OpenGraphProtocolVideoEpisode extends OpenGraphProtocolVideoObject
+class VideoEpisode extends Video
 {
     /**
      * URL of a video.tv_show which this episode belongs to

@@ -14,10 +14,8 @@ use DateTime;
 use DateTimeZone;
 use PHPUnit_Framework_TestCase;
 
-use NiallKennedy\OpenGraphProtocolTools\Media\OpenGraphProtocolImage;
-use NiallKennedy\OpenGraphProtocolTools\Media\OpenGraphProtocolVideo;
-use NiallKennedy\OpenGraphProtocolTools\Media\OpenGraphProtocolAudio;
-use NiallKennedy\OpenGraphProtocolTools\Objects\OpenGraphProtocolArticle;
+use NiallKennedy\OpenGraphProtocolTools\Media as OgptMedia;
+use NiallKennedy\OpenGraphProtocolTools\Objects\Article;
 use NiallKennedy\OpenGraphProtocolTools\OpenGraphProtocol;
 
 /**
@@ -30,7 +28,7 @@ class FromDocumentationTest extends PHPUnit_Framework_TestCase
     public function createImage()
     {
         /* From docs */
-        $image = new OpenGraphProtocolImage();
+        $image = new OgptMedia\Image();
         $image->setURL('http://example.com/image.jpg');
         $image->setSecureURL('https://example.com/image.jpg');
         $image->setType('image/jpeg');
@@ -58,10 +56,10 @@ class FromDocumentationTest extends PHPUnit_Framework_TestCase
     public function createVideo()
     {
         /* From docs */
-        $video = new OpenGraphProtocolVideo();
+        $video = new OgptMedia\Video();
         $video->setURL('http://example.com/video.swf' );
         $video->setSecureURL('https://example.com/video.swf' );
-        $video->setType(OpenGraphProtocolVideo::extensionToMediaType(pathinfo(parse_url($video->getURL(), PHP_URL_PATH), PATHINFO_EXTENSION)));
+        $video->setType(OgptMedia\Video::extensionToMediaType(pathinfo(parse_url($video->getURL(), PHP_URL_PATH), PATHINFO_EXTENSION)));
         $video->setWidth(500);
         $video->setHeight(400);
 
@@ -86,7 +84,7 @@ class FromDocumentationTest extends PHPUnit_Framework_TestCase
     public function createAudio()
     {
         /* From docs */
-        $audio = new OpenGraphProtocolAudio();
+        $audio = new OgptMedia\Audio();
         $audio->setURL('http://example.com/audio.mp3');
         $audio->setSecureURL('https://example.com/audio.mp3');
         $audio->setType('audio/mpeg');
@@ -158,7 +156,7 @@ class FromDocumentationTest extends PHPUnit_Framework_TestCase
     public function createGlobalArticle()
     {
         /* From docs */
-        $article = new OpenGraphProtocolArticle();
+        $article = new Article();
         $article->setPublishedTime( '2011-11-03T01:23:45Z' );
         $article->setModifiedTime( new DateTime( '2013-02-15T00:39:06+00:00', new DateTimeZone( 'America/Los_Angeles' ) ) );
         $article->setExpirationTime( '2011-12-31T23:59:59+00:00' );
@@ -187,7 +185,7 @@ class FromDocumentationTest extends PHPUnit_Framework_TestCase
     public function testCombined()
     {
         $ogp = $this->createOpenGraphProtocol();
-        $article = new OpenGraphProtocolArticle();
+        $article = new Article();
         /* From docs */
         $ogp_objects = array( $ogp, $article );
         $prefix = '';

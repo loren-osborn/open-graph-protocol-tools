@@ -18,7 +18,7 @@ use DateTime;
  *
  * @link http://ogp.me/#type_video Open Graph protocol video object
  */
-class OpenGraphProtocolVideoObject extends OpenGraphProtocolObject
+class Video extends Object
 {
     /**
      * Property prefix
@@ -144,7 +144,7 @@ class OpenGraphProtocolVideoObject extends OpenGraphProtocolObject
      *
      * @param string $url writer profile URL
      *
-     * @return OpenGraphProtocolVideoObject
+     * @return Video
      */
     public function addWriter($url)
     {

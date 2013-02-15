@@ -28,18 +28,18 @@ class BackwardCompatibility
     private static function getLegacyClassNameMap()
     {
         return array(
-            self::PACKAGE_NAMESPACE . '\\Media\\OpenGraphProtocolMedia'          => 'OpenGraphProtocolMedia',
-            self::PACKAGE_NAMESPACE . '\\Media\\OpenGraphProtocolAudio'          => 'OpenGraphProtocolAudio',
-            self::PACKAGE_NAMESPACE . '\\Media\\OpenGraphProtocolVisualMedia'    => 'OpenGraphProtocolVisualMedia',
-            self::PACKAGE_NAMESPACE . '\\Media\\OpenGraphProtocolImage'          => 'OpenGraphProtocolImage',
-            self::PACKAGE_NAMESPACE . '\\Media\\OpenGraphProtocolVideo'          => 'OpenGraphProtocolVideo',
-            self::PACKAGE_NAMESPACE . '\\Objects\\OpenGraphProtocolObject'       => 'OpenGraphProtocolObject',
-            self::PACKAGE_NAMESPACE . '\\Objects\\OpenGraphProtocolArticle'      => 'OpenGraphProtocolArticle',
-            self::PACKAGE_NAMESPACE . '\\Objects\\OpenGraphProtocolBook'         => 'OpenGraphProtocolBook',
-            self::PACKAGE_NAMESPACE . '\\Objects\\OpenGraphProtocolProfile'      => 'OpenGraphProtocolProfile',
-            self::PACKAGE_NAMESPACE . '\\Objects\\OpenGraphProtocolVideoObject'  => 'OpenGraphProtocolVideoObject',
-            self::PACKAGE_NAMESPACE . '\\Objects\\OpenGraphProtocolVideoEpisode' => 'OpenGraphProtocolVideoEpisode',
-            self::PACKAGE_NAMESPACE . '\\OpenGraphProtocol'                      => 'OpenGraphProtocol'
+            self::PACKAGE_NAMESPACE . '\\Media\\Media'          => 'OpenGraphProtocolMedia',
+            self::PACKAGE_NAMESPACE . '\\Media\\Audio'          => 'OpenGraphProtocolAudio',
+            self::PACKAGE_NAMESPACE . '\\Media\\VisualMedia'    => 'OpenGraphProtocolVisualMedia',
+            self::PACKAGE_NAMESPACE . '\\Media\\Image'          => 'OpenGraphProtocolImage',
+            self::PACKAGE_NAMESPACE . '\\Media\\Video'          => 'OpenGraphProtocolVideo',
+            self::PACKAGE_NAMESPACE . '\\Objects\\Object'       => 'OpenGraphProtocolObject',
+            self::PACKAGE_NAMESPACE . '\\Objects\\Article'      => 'OpenGraphProtocolArticle',
+            self::PACKAGE_NAMESPACE . '\\Objects\\Book'         => 'OpenGraphProtocolBook',
+            self::PACKAGE_NAMESPACE . '\\Objects\\Profile'      => 'OpenGraphProtocolProfile',
+            self::PACKAGE_NAMESPACE . '\\Objects\\Video'        => 'OpenGraphProtocolVideoObject',
+            self::PACKAGE_NAMESPACE . '\\Objects\\VideoEpisode' => 'OpenGraphProtocolVideoEpisode',
+            self::PACKAGE_NAMESPACE . '\\OpenGraphProtocol'     => 'OpenGraphProtocol'
         );
     }
 

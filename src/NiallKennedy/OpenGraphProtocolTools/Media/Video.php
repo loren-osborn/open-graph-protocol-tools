@@ -16,7 +16,7 @@ namespace NiallKennedy\OpenGraphProtocolTools\Media;
  *
  * @link http://ogp.me/ns#video Open Graph protocol audio structured properties
  */
-class OpenGraphProtocolVideo extends OpenGraphProtocolVisualMedia
+class Video extends VisualMedia
 {
     /**
      * Map a file extension to a registered Internet media type

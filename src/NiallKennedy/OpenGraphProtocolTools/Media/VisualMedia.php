@@ -16,7 +16,7 @@ namespace NiallKennedy\OpenGraphProtocolTools\Media;
  *
  * @link http://ogp.me/#structured Open Graph protocol structured properties
  */
-abstract class OpenGraphProtocolVisualMedia extends OpenGraphProtocolMedia
+abstract class VisualMedia extends Media
 {
     /**
      * Height of the media object in pixels

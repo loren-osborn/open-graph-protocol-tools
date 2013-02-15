@@ -10,9 +10,7 @@
 
 namespace NiallKennedy\OpenGraphProtocolTools;
 
-use NiallKennedy\OpenGraphProtocolTools\Media\OpenGraphProtocolImage;
-use NiallKennedy\OpenGraphProtocolTools\Media\OpenGraphProtocolAudio;
-use NiallKennedy\OpenGraphProtocolTools\Media\OpenGraphProtocolVideo;
+use NiallKennedy\OpenGraphProtocolTools\Media as OgptMedia;
 
 /**
  * Open Graph Protocol data class. Define and validate OGP values.
@@ -106,7 +104,7 @@ class OpenGraphProtocol
     protected $locale;
 
     /**
-     * An array of OpenGraphProtocolImage objects
+     * An array of OgptMedia\Image objects
      *
      * @var array
      * @since 1.0
@@ -114,7 +112,7 @@ class OpenGraphProtocol
     protected $image;
 
     /**
-     * An array of OpenGraphProtocolAudio objects
+     * An array of OgptMedia\Audio objects
      *
      * @var array
      * @since 1.2
@@ -122,7 +120,7 @@ class OpenGraphProtocol
     protected $audio;
 
     /**
-     * An array of OpenGraphProtocolVideo objects
+     * An array of OgptMedia\Video objects
      *
      * @var array
      * @since 1.2
@@ -569,7 +567,7 @@ class OpenGraphProtocol
     }
 
     /**
-     * @return array OpenGraphProtocolImage array
+     * @return array OgptMedia\Image array
      */
     public function getImage()
     {
@@ -580,9 +578,9 @@ class OpenGraphProtocol
      * Add an image.
      * The first image added is given priority by the Open Graph Protocol spec. Implementors may choose a different image based on size requirements or preferences.
      *
-     * @param OpenGraphProtocolImage $image image object to add
+     * @param OgptMedia\Image $image image object to add
      */
-    public function addImage(OpenGraphProtocolImage $image)
+    public function addImage(OgptMedia\Image $image)
     {
         $image_url = $image->getURL();
         if (empty($image_url)) {
@@ -600,7 +598,7 @@ class OpenGraphProtocol
     }
 
     /**
-     * @return array OpenGraphProtocolAudio objects
+     * @return array OgptMedia\Audio objects
      */
     public function getAudio()
     {
@@ -611,9 +609,9 @@ class OpenGraphProtocol
      * Add an audio reference
      * The first audio is given priority by the Open Graph protocol spec.
      *
-     * @param OpenGraphProtocolAudio $audio audio object to add
+     * @param OgptMedia\Audio $audio audio object to add
      */
-    public function addAudio(OpenGraphProtocolAudio $audio)
+    public function addAudio(OgptMedia\Audio $audio)
     {
         $audio_url = $audio->getURL();
         if (empty($audio_url)) {
@@ -631,7 +629,7 @@ class OpenGraphProtocol
     }
 
     /**
-     * @return array OpenGraphProtocolVideo objects
+     * @return array OgptMedia\Video objects
      */
     public function getVideo()
     {
@@ -642,9 +640,9 @@ class OpenGraphProtocol
      * Add a video reference
      * The first video is given priority by the Open Graph protocol spec. Implementors may choose a different video based on size requirements or preferences.
      *
-     * @param OpenGraphProtocolVideo $video video object to add
+     * @param OgptMedia\Video $video video object to add
      */
-    public function addVideo(OpenGraphProtocolVideo $video)
+    public function addVideo(OgptMedia\Video $video)
     {
         $video_url = $video->getURL();
         if (empty($video_url)) {

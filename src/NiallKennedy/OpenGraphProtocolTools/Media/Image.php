@@ -16,7 +16,7 @@ namespace NiallKennedy\OpenGraphProtocolTools\Media;
  *
  * @link http://ogp.me/ns#image Open Graph protocol image structured properties
  */
-class OpenGraphProtocolImage extends OpenGraphProtocolVisualMedia
+class Image extends VisualMedia
 {
     /**
      * Map a file extension to a registered Internet media type

@@ -19,7 +19,7 @@ use NiallKennedy\OpenGraphProtocolTools\OpenGraphProtocol;
  *
  * @link http://ogp.me/#types Open Graph protocol global types
  */
-abstract class OpenGraphProtocolObject
+abstract class Object
 {
     /**
      * Property prefix
