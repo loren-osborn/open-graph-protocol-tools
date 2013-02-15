@@ -50,7 +50,7 @@ class OpenGraphProtocolBook extends OpenGraphProtocolObject
      * Stored as an ISO 8601 date string normalized to UTC for consistency
      * @var string
      */
-    protected $releaseDate;
+    protected $release_date;
 
     /**
      * Tag words describing book content and subjects
@@ -139,20 +139,20 @@ class OpenGraphProtocolBook extends OpenGraphProtocolObject
      */
     public function getReleaseDate()
     {
-        return $this->releaseDate;
+        return $this->release_date;
     }
 
     /**
      * Set the book release date
      *
-     * @param DateTime|string $releaseDate release date as DateTime or as an ISO 8601 formatted string
+     * @param DateTime|string $release_date release date as DateTime or as an ISO 8601 formatted string
      */
-    public function setReleaseDate($releaseDate)
+    public function setReleaseDate($release_date)
     {
-        if ($releaseDate instanceof DateTime) {
-            $this->releaseDate = static::datetimeToIso8601($releaseDate);
-        } elseif (is_string($releaseDate) && strlen($releaseDate) >= 10) { // at least YYYY-MM-DD
-            $this->releaseDate = $releaseDate;
+        if ($release_date instanceof DateTime) {
+            $this->release_date = static::datetimeToIso8601($release_date);
+        } elseif (is_string($release_date) && strlen($release_date) >= 10) { // at least YYYY-MM-DD
+            $this->release_date = $release_date;
         }
 
         return $this;

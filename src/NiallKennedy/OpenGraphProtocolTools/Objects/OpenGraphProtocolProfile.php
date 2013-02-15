@@ -33,13 +33,13 @@ class OpenGraphProtocolProfile extends OpenGraphProtocolObject
      * A person's given name
      * @var string
      */
-    protected $firstName;
+    protected $first_name;
 
     /**
      * A person's last name
      * @var string
      */
-    protected $lastName;
+    protected $last_name;
 
     /**
      * The profile's unique username
@@ -58,17 +58,17 @@ class OpenGraphProtocolProfile extends OpenGraphProtocolObject
      */
     public function getFirstName()
     {
-        return $this->firstName;
+        return $this->first_name;
     }
 
     /**
      * Set the person's given name
-     * @param string $firstName given name
+     * @param string $first_name given name
      */
-    public function setFirstName($firstName)
+    public function setFirstName($first_name)
     {
-        if (is_string($firstName) && !empty($firstName)) {
-            $this->firstName = $firstName;
+        if (is_string($first_name) && !empty($first_name)) {
+            $this->first_name = $first_name;
         }
 
         return $this;
@@ -80,17 +80,17 @@ class OpenGraphProtocolProfile extends OpenGraphProtocolObject
      */
     public function getLastName()
     {
-        return $this->lastName;
+        return $this->last_name;
     }
 
     /**
      * Set the person's family name
-     * @param string $lastName family name
+     * @param string $last_name family name
      */
-    public function setLastName($lastName)
+    public function setLastName($last_name)
     {
-        if (is_string($lastName) && !empty($lastName)) {
-            $this->lastName = $lastName;
+        if (is_string($last_name) && !empty($last_name)) {
+            $this->last_name = $last_name;
         }
 
         return $this;

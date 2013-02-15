@@ -34,7 +34,7 @@ abstract class OpenGraphProtocolMedia
      * @var string
      * @since 1.3
      */
-    protected $secureUrl;
+    protected $secure_url;
 
     /**
      * Internet media type of the linked URLs
@@ -121,7 +121,7 @@ abstract class OpenGraphProtocolMedia
                 }
             }
             if (!empty($url)) {
-                $this->secureUrl = $url;
+                $this->secure_url = $url;
             }
         }
 

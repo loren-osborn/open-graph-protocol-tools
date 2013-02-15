@@ -36,21 +36,21 @@ class OpenGraphProtocolArticle extends OpenGraphProtocolObject
      * ISO 8601 formatted string.
      * @var string
      */
-    protected $publishedTime;
+    protected $published_time;
 
     /**
      * When the article was last changed
      * ISO 8601 formatted string.
      * @var string
      */
-    protected $modifiedTime;
+    protected $modified_time;
 
     /**
      * When the article is considered out-of-date
      * ISO 8601 formatted string.
      * @var string
      */
-    protected $expirationTime;
+    protected $expiration_time;
 
     /**
      * Writers of the article.
@@ -87,7 +87,7 @@ class OpenGraphProtocolArticle extends OpenGraphProtocolObject
      */
     public function getPublishedTime()
     {
-        return $this->publishedTime;
+        return $this->published_time;
     }
 
     /**
@@ -97,9 +97,9 @@ class OpenGraphProtocolArticle extends OpenGraphProtocolObject
     public function setPublishedTime($pubdate)
     {
         if ($pubdate instanceof DateTime) {
-            $this->publishedTime = static::datetimeToIso8601($pubdate);
+            $this->published_time = static::datetimeToIso8601($pubdate);
         } elseif (is_string($pubdate) && strlen($pubdate) >= 10) { // at least YYYY-MM-DD
-            $this->publishedTime = $pubdate;
+            $this->published_time = $pubdate;
         }
 
         return $this;
@@ -111,7 +111,7 @@ class OpenGraphProtocolArticle extends OpenGraphProtocolObject
      */
     public function getModifiedTime()
     {
-        return $this->modifiedTime;
+        return $this->modified_time;
     }
 
     /**
@@ -121,9 +121,9 @@ class OpenGraphProtocolArticle extends OpenGraphProtocolObject
     public function setModifiedTime($updated)
     {
         if ($updated instanceof DateTime) {
-            $this->modifiedTime = static::datetimeToIso8601($updated);
+            $this->modified_time = static::datetimeToIso8601($updated);
         } elseif (is_string($updated) && strlen($updated) >= 10) { // at least YYYY-MM-DD
-            $this->modifiedTime = $updated;
+            $this->modified_time = $updated;
         }
 
         return $this;
@@ -135,7 +135,7 @@ class OpenGraphProtocolArticle extends OpenGraphProtocolObject
      */
     public function getExpirationTime()
     {
-        return $this->expirationTime;
+        return $this->expiration_time;
     }
 
     /**
@@ -145,9 +145,9 @@ class OpenGraphProtocolArticle extends OpenGraphProtocolObject
     public function setExpirationTime($expires)
     {
         if ($expires instanceof DateTime) {
-            $this->expirationTime = static::datetimeToIso8601($expires);
+            $this->expiration_time = static::datetimeToIso8601($expires);
         } elseif (is_string($expires) && strlen($expires) >= 10) {
-            $this->expirationTime = $expires;
+            $this->expiration_time = $expires;
         }
 
         return $this;

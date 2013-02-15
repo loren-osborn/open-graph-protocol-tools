@@ -32,6 +32,10 @@ Support for structured properties for image, video, and audio objects.
 
 ```php
 <?php
+use NiallKennedy\OpenGraphProtocolTools\Media\OpenGraphProtocolImage;
+use NiallKennedy\OpenGraphProtocolTools\Media\OpenGraphProtocolVideo;
+use NiallKennedy\OpenGraphProtocolTools\Media\OpenGraphProtocolAudio;
+
 $image = new OpenGraphProtocolImage();
 $image->setURL( 'http://example.com/image.jpg' );
 $image->setSecureURL( 'https://example.com/image.jpg' );
@@ -42,7 +46,7 @@ $image->setHeight( 300 );
 $video = new OpenGraphProtocolVideo();
 $video->setURL( 'http://example.com/video.swf' );
 $video->setSecureURL( 'https://example.com/video.swf' );
-$video->setType( OpenGraphProtocolVideo::extension_to_media_type( pathinfo( parse_url( $video->getURL(), PHP_URL_PATH ), PATHINFO_EXTENSION ) ) );
+$video->setType( OpenGraphProtocolVideo::extensionToMediaType( pathinfo( parse_url( $video->getURL(), PHP_URL_PATH ), PATHINFO_EXTENSION ) ) );
 $video->setWidth( 500 );
 $video->setHeight( 400 );
 
@@ -50,13 +54,14 @@ $audio = new OpenGraphProtocolAudio();
 $audio->setURL( 'http://example.com/audio.mp3' );
 $audio->setSecureURL( 'https://example.com/audio.mp3' );
 $audio->setType('audio/mpeg');
-?>
 ```
 
 Declare a new `OpenGraphProtocol` object and set some properties. Add structured media objects.
 
 ```php
 <?php
+use NiallKennedy\OpenGraphProtocolTools\OpenGraphProtocol;
+
 $ogp = new OpenGraphProtocol();
 $ogp->setLocale( 'en_US' );
 $ogp->setSiteName( 'Happy place' );
@@ -68,7 +73,6 @@ $ogp->setDeterminer( 'the' );
 $ogp->addImage($image);
 $ogp->addAudio($audio);
 $ogp->addVideo($video);
-?>
 ```
 
 Output your OpenGraphProtocol object as HTML `<meta>` elements. Default configuration uses the `property` attribute from RDFa. Change to `name` if you prefer HTML specification compliance and consuming agents support the `name` attribute as a `property` fallback.
@@ -85,6 +89,8 @@ Build global objects and attributes. Set time values using either an ISO 8601 fo
 
 ```php
 <?php
+use NiallKennedy\OpenGraphProtocolTools\Objects\OpenGraphProtocolArticle;
+
 $article = new OpenGraphProtocolArticle();
 $article->setPublishedTime( '2011-11-03T01:23:45Z' );
 $article->setModifiedTime( new DateTime( 'now', new DateTimeZone( 'America/Los_Angeles' ) ) );
@@ -93,7 +99,6 @@ $article->setSection( 'Front page' );
 $article->addTag( 'weather' );
 $article->addTag( 'football' );
 $article->addAuthor( 'http://example.com/author.html' );
-?>
 ```
 
 Convert a global object to `<meta>` elements just as you would with `OpenGraphProtocol.`
@@ -101,7 +106,6 @@ Convert a global object to `<meta>` elements just as you would with `OpenGraphPr
 ```php
 <?php
 $article->toHTML();
-?>
 ```
 
 ### Combined

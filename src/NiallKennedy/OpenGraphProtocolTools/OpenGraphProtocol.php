@@ -13,7 +13,6 @@ namespace NiallKennedy\OpenGraphProtocolTools;
 use NiallKennedy\OpenGraphProtocolTools\Media\OpenGraphProtocolImage;
 use NiallKennedy\OpenGraphProtocolTools\Media\OpenGraphProtocolAudio;
 use NiallKennedy\OpenGraphProtocolTools\Media\OpenGraphProtocolVideo;
-use NiallKennedy\OpenGraphProtocolTools\Utils\Inflector;
 
 /**
  * Open Graph Protocol data class. Define and validate OGP values.
@@ -148,7 +147,6 @@ class OpenGraphProtocol
         }
         $s = '';
         foreach ($og as $property => $content) {
-            $inflectedProperty = Inflector::inflect($property, Inflector::INFLECTION_CAMEL_CASE, Inflector::INFLECTION_LOWERCASE_WITH_UNDERSCORE_SEPARATORS);
             if (is_object($content) || is_array($content)) {
                 if (is_object($content)) {
                     $content = $content->toArray();
@@ -156,12 +154,12 @@ class OpenGraphProtocol
                 if (empty($property) || !is_string($property)) {
                     $s .= static::buildHTML($content, $prefix);
                 } else {
-                    $s .= static::buildHTML($content, $prefix . ':' . $inflectedProperty);
+                    $s .= static::buildHTML($content, $prefix . ':' . $property);
                 }
             } elseif (!empty($content)) {
                 $s .= '<meta ' . self::META_ATTR . '="' . $prefix;
                 if (is_string($property) && !empty($property)) {
-                    $s .= ':' . htmlspecialchars( $inflectedProperty );
+                    $s .= ':' . htmlspecialchars( $property );
                 }
                 $s .= '" content="' . htmlspecialchars($content) . '">' . PHP_EOL;
             }

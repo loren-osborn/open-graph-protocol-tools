@@ -10,7 +10,6 @@
 
 namespace NiallKennedy\OpenGraphProtocolTools\Legacy;
 
-use NiallKennedy\OpenGraphProtocolTools\Utils\Inflector;
 use Exception;
 use ReflectionClass;
 
@@ -21,7 +20,7 @@ use ReflectionClass;
  */
 class BackwardCompatibility
 {
-    const PACKAGE_NAMESPACE                               = 'NiallKennedy\\OpenGraphProtocolTools';
+    const PACKAGE_NAMESPACE = 'NiallKennedy\\OpenGraphProtocolTools';
 
     private $proxiedObject;
     private static $classCreationChecklist = array();
@@ -57,9 +56,8 @@ class BackwardCompatibility
     {
         if (method_exists($this->proxiedObject, $name)) {
             $cleanArgs = self::cleanProxyCallArgs(get_class($this->proxiedObject), $name, $arguments);
-            $rawResults = call_user_func_array(array($this->proxiedObject, $name), $cleanArgs);
 
-            return self::cleanProxyCallResult(get_class($this->proxiedObject), $name, $rawResults);
+            return call_user_func_array(array($this->proxiedObject, $name), $cleanArgs);
         }
         throw new Exception('No such method: ' . $name);
     }
@@ -78,25 +76,12 @@ class BackwardCompatibility
         return $result;
     }
 
-    private static function cleanProxyCallResult($class, $method, $rawResult)
-    {
-        $result = $rawResult;
-        if ($method == 'toArray') {
-            $result = array();
-            foreach ($rawResult as $key => $value) {
-                $inflectedKey = Inflector::inflect($key, Inflector::INFLECTION_CAMEL_CASE, Inflector::INFLECTION_LOWERCASE_WITH_UNDERSCORE_SEPARATORS);
-                $result[$inflectedKey] = $value;
-            }
-        }
-
-        return $result;
-    }
-
     protected static function callStaticInternal($name, $arguments, $className)
     {
-        $inflectedName = Inflector::inflect($name, Inflector::INFLECTION_LOWERCASE_WITH_UNDERSCORE_SEPARATORS, Inflector::INFLECTION_CAMEL_CASE);
+        $inflectedName = self::inflectStaticMethodName($name);
         if (method_exists($className, $inflectedName)) {
-            $result = forward_static_call_array(array($className, $inflectedName), $arguments);
+            $cleanArgs = self::cleanProxyCallArgs($className, $name, $arguments);
+            $result = forward_static_call_array(array($className, $inflectedName), $cleanArgs);
 
             return $result;
         }
@@ -145,5 +130,10 @@ class BackwardCompatibility
             '}';
         eval($compatibilityClassSource);
         self::$classCreationChecklist[$className] = true;
+    }
+
+    public static function inflectStaticMethodName($name)
+    {
+        return lcfirst(implode('', array_map('ucfirst', explode('_', $name))));
     }
 }
