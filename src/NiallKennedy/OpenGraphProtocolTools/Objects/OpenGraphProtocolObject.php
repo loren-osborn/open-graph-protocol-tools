@@ -11,6 +11,7 @@
 namespace NiallKennedy\OpenGraphProtocolTools\Objects;
 
 use DateTime;
+use DateTimeZone;
 use NiallKennedy\OpenGraphProtocolTools\OpenGraphProtocol;
 
 /**

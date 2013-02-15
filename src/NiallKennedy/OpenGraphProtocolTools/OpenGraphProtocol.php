@@ -13,6 +13,7 @@ namespace NiallKennedy\OpenGraphProtocolTools;
 use NiallKennedy\OpenGraphProtocolTools\Media\OpenGraphProtocolImage;
 use NiallKennedy\OpenGraphProtocolTools\Media\OpenGraphProtocolAudio;
 use NiallKennedy\OpenGraphProtocolTools\Media\OpenGraphProtocolVideo;
+use NiallKennedy\OpenGraphProtocolTools\Utils\Inflector;
 
 /**
  * Open Graph Protocol data class. Define and validate OGP values.
@@ -129,6 +130,11 @@ class OpenGraphProtocol
      */
     protected $video;
 
+    private static function gettext($text, $domain = '')
+    {
+        return function_exists('gettext') ? gettext($text, $domain) : $text;
+    }
+
     /**
      * Build Open Graph protocol HTML markup based on an array
      *
@@ -142,6 +148,7 @@ class OpenGraphProtocol
         }
         $s = '';
         foreach ($og as $property => $content) {
+            $inflectedProperty = Inflector::inflect($property, Inflector::INFLECTION_CAMEL_CASE, Inflector::INFLECTION_LOWERCASE_WITH_UNDERSCORE_SEPARATORS);
             if (is_object($content) || is_array($content)) {
                 if (is_object($content)) {
                     $content = $content->toArray();
@@ -149,12 +156,12 @@ class OpenGraphProtocol
                 if (empty($property) || !is_string($property)) {
                     $s .= static::buildHTML($content, $prefix);
                 } else {
-                    $s .= static::buildHTML($content, $prefix . ':' . $property);
+                    $s .= static::buildHTML($content, $prefix . ':' . $inflectedProperty);
                 }
             } elseif (!empty($content)) {
                 $s .= '<meta ' . self::META_ATTR . '="' . $prefix;
                 if (is_string($property) && !empty($property)) {
-                    $s .= ':' . htmlspecialchars( $property );
+                    $s .= ':' . htmlspecialchars( $inflectedProperty );
                 }
                 $s .= '" content="' . htmlspecialchars($content) . '">' . PHP_EOL;
             }
@@ -173,65 +180,65 @@ class OpenGraphProtocol
     public static function supportedTypes($flatten = false)
     {
         $types = array(
-            gettext('Activities') => array(
-                'activity'       => gettext('Activity'),
-                'sport'          => gettext('Sport')
+            self::gettext('Activities') => array(
+                'activity'       => self::gettext('Activity'),
+                'sport'          => self::gettext('Sport')
             ),
-            gettext('Businesses') => array(
-                'company'        => gettext('Company'),
-                'bar'            => gettext('Bar'),
-                'cafe'           => gettext('Cafe'),
-                'hotel'          => gettext('Hotel'),
-                'restaurant'     => gettext('Restaurant')
+            self::gettext('Businesses') => array(
+                'company'        => self::gettext('Company'),
+                'bar'            => self::gettext('Bar'),
+                'cafe'           => self::gettext('Cafe'),
+                'hotel'          => self::gettext('Hotel'),
+                'restaurant'     => self::gettext('Restaurant')
             ),
-            gettext('Groups') => array(
-                'cause'          => gettext('Cause'),
-                'sports_league'  => gettext('Sports league'),
-                'sports_team'    => gettext('Sports team')
+            self::gettext('Groups') => array(
+                'cause'          => self::gettext('Cause'),
+                'sports_league'  => self::gettext('Sports league'),
+                'sports_team'    => self::gettext('Sports team')
             ),
-            gettext('Organizations') => array(
-                'band'           => gettext('Band'),
-                'government'     => gettext('Government'),
-                'non_profit'     => gettext('Non-profit'),
-                'school'         => gettext('School'),
-                'university'     => gettext('University')
+            self::gettext('Organizations') => array(
+                'band'           => self::gettext('Band'),
+                'government'     => self::gettext('Government'),
+                'non_profit'     => self::gettext('Non-profit'),
+                'school'         => self::gettext('School'),
+                'university'     => self::gettext('University')
             ),
-            gettext('People') => array(
-                'actor'          => gettext('Actor or actress'),
-                'athlete'        => gettext('Athlete'),
-                'author'         => gettext('Author'),
-                'director'       => gettext('Director'),
-                'musician'       => gettext('Musician'),
-                'politician'     => gettext('Politician'),
-                'profile'        => gettext('Profile'),
-                'public_figure'  => gettext('Public Figure')
+            self::gettext('People') => array(
+                'actor'          => self::gettext('Actor or actress'),
+                'athlete'        => self::gettext('Athlete'),
+                'author'         => self::gettext('Author'),
+                'director'       => self::gettext('Director'),
+                'musician'       => self::gettext('Musician'),
+                'politician'     => self::gettext('Politician'),
+                'profile'        => self::gettext('Profile'),
+                'public_figure'  => self::gettext('Public Figure')
             ),
-            gettext('Places') => array(
-                'city'           => gettext('City or locality'),
-                'country'        => gettext('Country'),
-                'landmark'       => gettext('Landmark'),
-                'state_province' => gettext('State or province')
+            self::gettext('Places') => array(
+                'city'           => self::gettext('City or locality'),
+                'country'        => self::gettext('Country'),
+                'landmark'       => self::gettext('Landmark'),
+                'state_province' => self::gettext('State or province')
             ),
-            gettext('Products and Entertainment') => array(
-                'music.album'    => gettext('Music Album'),
-                'book'           => gettext('Book'),
-                'drink'          => gettext('Drink'),
-                'video.episode'  => gettext('Video episode'),
-                'food'           => gettext('Food'),
-                'game'           => gettext('Game'),
-                'video.movie'    => gettext('Movie'),
-                'music.playlist' => gettext('Music playlist'),
-                'product'        => gettext('Product'),
+            self::gettext('Products and Entertainment') => array(
+                'music.album'    => self::gettext('Music Album'),
+                'book'           => self::gettext('Book'),
+                'drink'          => self::gettext('Drink'),
+                'video.episode'  => self::gettext('Video episode'),
+                'food'           => self::gettext('Food'),
+                'game'           => self::gettext('Game'),
+                'video.movie'    => self::gettext('Movie'),
+                'music.playlist' => self::gettext('Music playlist'),
+                'product'        => self::gettext('Product'),
                 'music.radio_station'
-                                 => gettext('Radio station'),
-                'music.song'     => gettext('Song'),
-                'video.tv_show'  => gettext('Television show'),
-                'video.other'    => gettext('Video')
+                                 => self::gettext('Radio station'),
+                'music.song'     => self::gettext('Song'),
+                'video.tv_show'  => self::gettext('Television show'),
+                'video.other'    => self::gettext('Video')
             ),
-            gettext('Websites') => array(
-                'article'        => gettext('Article'),
-                'blog'           => gettext('Blog'),
-                'website'        => gettext('Website')
+            self::gettext('Websites') => array(
+                'article'        => self::gettext('Article'),
+                'blog'           => self::gettext('Blog'),
+                'website'        => self::gettext('Website')
             )
         );
         if ($flatten === true) {
@@ -257,78 +264,78 @@ class OpenGraphProtocol
     public static function supportedLocales($keys_only = false)
     {
         $locales = array(
-            'af_ZA' => gettext('Afrikaans'),
-            'ar_AR' => gettext('Arabic'),
-            'az_AZ' => gettext('Azeri'),
-            'be_BY' => gettext('Belarusian'),
-            'bg_BG' => gettext('Bulgarian'),
-            'bn_IN' => gettext('Bengali'),
-            'bs_BA' => gettext('Bosnian'),
-            'ca_ES' => gettext('Catalan'),
-            'cs_CZ' => gettext('Czech'),
-            'cy_GB' => gettext('Welsh'),
-            'da_DK' => gettext('Danish'),
-            'de_DE' => gettext('German'),
-            'el_GR' => gettext('Greek'),
-            'en_GB' => gettext('English (UK)'),
-            'en_US' => gettext('English (US)'),
-            'eo_EO' => gettext('Esperanto'),
-            'es_ES' => gettext('Spanish (Spain)'),
-            'es_LA' => gettext('Spanish (Latin America)'),
-            'et_EE' => gettext('Estonian'),
-            'eu_ES' => gettext('Basque'),
-            'fa_IR' => gettext('Persian'),
-            'fi_FI' => gettext('Finnish'),
-            'fo_FO' => gettext('Faroese'),
-            'fr_CA' => gettext('French (Canada)'),
-            'fr_FR' => gettext('French (France)'),
-            'fy_NL' => gettext('Frisian'),
-            'ga_IE' => gettext('Irish'),
-            'gl_ES' => gettext('Galician'),
-            'he_IL' => gettext('Hebrew'),
-            'hi_IN' => gettext('Hindi'),
-            'hr_HR' => gettext('Croatian'),
-            'hu_HU' => gettext('Hungarian'),
-            'hy_AM' => gettext('Armenian'),
-            'id_ID' => gettext('Indonesian'),
-            'is_IS' => gettext('Icelandic'),
-            'it_IT' => gettext('Italian'),
-            'ja_JP' => gettext('Japanese'),
-            'ka_GE' => gettext('Georgian'),
-            'ko_KR' => gettext('Korean'),
-            'ku_TR' => gettext('Kurdish'),
-            'la_VA' => gettext('Latin'),
-            'lt_LT' => gettext('Lithuanian'),
-            'lv_LV' => gettext('Latvian'),
-            'mk_MK' => gettext('Macedonian'),
-            'ml_IN' => gettext('Malayalam'),
-            'ms_MY' => gettext('Malay'),
-            'nb_NO' => gettext('Norwegian (bokmal)'),
-            'ne_NP' => gettext('Nepali'),
-            'nl_NL' => gettext('Dutch'),
-            'nn_NO' => gettext('Norwegian (nynorsk)'),
-            'pa_IN' => gettext('Punjabi'),
-            'pl_PL' => gettext('Polish'),
-            'ps_AF' => gettext('Pashto'),
-            'pt_PT' => gettext('Portuguese (Brazil)'),
-            'ro_RO' => gettext('Romanian'),
-            'ru_RU' => gettext('Russian'),
-            'sk_SK' => gettext('Slovak'),
-            'sl_SI' => gettext('Slovenian'),
-            'sq_AL' => gettext('Albanian'),
-            'sr_RS' => gettext('Serbian'),
-            'sv_SE' => gettext('Swedish'),
-            'sw_KE' => gettext('Swahili'),
-            'ta_IN' => gettext('Tamil'),
-            'te_IN' => gettext('Telugu'),
-            'th_TH' => gettext('Thai'),
-            'tl_PH' => gettext('Filipino'),
-            'tr_TR' => gettext('Turkish'),
-            'uk_UA' => gettext('Ukrainian'),
-            'vi_VN' => gettext('Vietnamese'),
-            'zh_CN' => gettext('Simplified Chinese (China)'),
-            'zh_HK' => gettext('Traditional Chinese (Hong Kong)'),
-            'zh_TW' => gettext('Traditional Chinese (Taiwan)')
+            'af_ZA' => self::gettext('Afrikaans'),
+            'ar_AR' => self::gettext('Arabic'),
+            'az_AZ' => self::gettext('Azeri'),
+            'be_BY' => self::gettext('Belarusian'),
+            'bg_BG' => self::gettext('Bulgarian'),
+            'bn_IN' => self::gettext('Bengali'),
+            'bs_BA' => self::gettext('Bosnian'),
+            'ca_ES' => self::gettext('Catalan'),
+            'cs_CZ' => self::gettext('Czech'),
+            'cy_GB' => self::gettext('Welsh'),
+            'da_DK' => self::gettext('Danish'),
+            'de_DE' => self::gettext('German'),
+            'el_GR' => self::gettext('Greek'),
+            'en_GB' => self::gettext('English (UK)'),
+            'en_US' => self::gettext('English (US)'),
+            'eo_EO' => self::gettext('Esperanto'),
+            'es_ES' => self::gettext('Spanish (Spain)'),
+            'es_LA' => self::gettext('Spanish (Latin America)'),
+            'et_EE' => self::gettext('Estonian'),
+            'eu_ES' => self::gettext('Basque'),
+            'fa_IR' => self::gettext('Persian'),
+            'fi_FI' => self::gettext('Finnish'),
+            'fo_FO' => self::gettext('Faroese'),
+            'fr_CA' => self::gettext('French (Canada)'),
+            'fr_FR' => self::gettext('French (France)'),
+            'fy_NL' => self::gettext('Frisian'),
+            'ga_IE' => self::gettext('Irish'),
+            'gl_ES' => self::gettext('Galician'),
+            'he_IL' => self::gettext('Hebrew'),
+            'hi_IN' => self::gettext('Hindi'),
+            'hr_HR' => self::gettext('Croatian'),
+            'hu_HU' => self::gettext('Hungarian'),
+            'hy_AM' => self::gettext('Armenian'),
+            'id_ID' => self::gettext('Indonesian'),
+            'is_IS' => self::gettext('Icelandic'),
+            'it_IT' => self::gettext('Italian'),
+            'ja_JP' => self::gettext('Japanese'),
+            'ka_GE' => self::gettext('Georgian'),
+            'ko_KR' => self::gettext('Korean'),
+            'ku_TR' => self::gettext('Kurdish'),
+            'la_VA' => self::gettext('Latin'),
+            'lt_LT' => self::gettext('Lithuanian'),
+            'lv_LV' => self::gettext('Latvian'),
+            'mk_MK' => self::gettext('Macedonian'),
+            'ml_IN' => self::gettext('Malayalam'),
+            'ms_MY' => self::gettext('Malay'),
+            'nb_NO' => self::gettext('Norwegian (bokmal)'),
+            'ne_NP' => self::gettext('Nepali'),
+            'nl_NL' => self::gettext('Dutch'),
+            'nn_NO' => self::gettext('Norwegian (nynorsk)'),
+            'pa_IN' => self::gettext('Punjabi'),
+            'pl_PL' => self::gettext('Polish'),
+            'ps_AF' => self::gettext('Pashto'),
+            'pt_PT' => self::gettext('Portuguese (Brazil)'),
+            'ro_RO' => self::gettext('Romanian'),
+            'ru_RU' => self::gettext('Russian'),
+            'sk_SK' => self::gettext('Slovak'),
+            'sl_SI' => self::gettext('Slovenian'),
+            'sq_AL' => self::gettext('Albanian'),
+            'sr_RS' => self::gettext('Serbian'),
+            'sv_SE' => self::gettext('Swedish'),
+            'sw_KE' => self::gettext('Swahili'),
+            'ta_IN' => self::gettext('Tamil'),
+            'te_IN' => self::gettext('Telugu'),
+            'th_TH' => self::gettext('Thai'),
+            'tl_PH' => self::gettext('Filipino'),
+            'tr_TR' => self::gettext('Turkish'),
+            'uk_UA' => self::gettext('Ukrainian'),
+            'vi_VN' => self::gettext('Vietnamese'),
+            'zh_CN' => self::gettext('Simplified Chinese (China)'),
+            'zh_HK' => self::gettext('Traditional Chinese (Hong Kong)'),
+            'zh_TW' => self::gettext('Traditional Chinese (Taiwan)')
         );
         if ($keys_only === true) {
             return array_keys($locales);

@@ -2,7 +2,7 @@
 /*
  * Based on PSR-0 standard: Example [autoloader] implementation
  */
-function openGraphPhpUnitAutoload($className)
+spl_autoload_register(function ($className)
 {
     $className = ltrim($className, '\\');
     $fileName  = '';
@@ -19,6 +19,4 @@ function openGraphPhpUnitAutoload($className)
     if (file_exists($absolutePath)) {
         require $absolutePath;
     }
-}
-
-spl_autoload_register('openGraphPhpUnitAutoload');
+});

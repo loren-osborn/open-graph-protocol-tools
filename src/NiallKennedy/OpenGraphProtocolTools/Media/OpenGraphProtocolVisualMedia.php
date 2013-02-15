@@ -8,71 +8,72 @@
  * @copyright Public Domain
  */
 
-namespace NiallKennedy\OpenGraphProtocolTools\Objects;
-
-use DateTime;
-use NiallKennedy\OpenGraphProtocolTools\OpenGraphProtocol;
+namespace NiallKennedy\OpenGraphProtocolTools\Media;
 
 /**
- * Open Graph protocol global types
+ * Describe a media object that can be displayed on a region of the screen
+ * Structured properties representations of Open Graph protocol media.
  *
- * @link http://ogp.me/#types Open Graph protocol global types
+ * @link http://ogp.me/#structured Open Graph protocol structured properties
  */
-abstract class OpenGraphProtocolObject
+abstract class OpenGraphProtocolVisualMedia extends OpenGraphProtocolMedia
 {
     /**
-     * Property prefix
-     * @var string
-     */
-    const PREFIX = '';
-
-    /**
-     * prefix namespace
-     * @var string
-     */
-    const NS = '';
-
-    /**
-     * Output the object as HTML <meta> elements
-     * @return string HTML meta element string
-     */
-    public function toHTML()
-    {
-        return rtrim(OpenGraphProtocol::buildHTML(get_object_vars($this), static::PREFIX), PHP_EOL);
-    }
-
-    /**
-     * Convert a DateTime object to GMT and format as an ISO 8601 string.
-     * @param  DateTime $date date to convert
-     * @return string   ISO 8601 formatted datetime string
-     */
-    public static function datetimeToIso8601(DateTime $date)
-    {
-        $date->setTimezone(new DateTimeZone('GMT'));
-
-        return $date->format('c');
-    }
-
-    /**
-     * Test a URL for validity.
+     * Height of the media object in pixels
      *
-     * @uses OpenGraphProtocol::isValidUrl if OpenGraphProtocol::VERIFY_URLS is true
-     * @param  string $url absolute URL addressable from the public web
-     * @return bool   true if URL is non-empty string. if VERIFY_URLS set then URL must also properly respond to a HTTP request.
+     * @var int
+     * @since 1.3
      */
-    public static function isValidUrl($url)
+    protected $height;
+
+    /**
+     * Width of the media object in pixels
+     *
+     * @var int
+     * @since 1.3
+     */
+    protected $width;
+
+    /**
+     * @return int width in pixels
+     */
+    public function getWidth()
     {
-        if (is_string($url) && !empty($url)) {
-            if (OpenGraphProtocol::VERIFY_URLS) {
-                $url = OpenGraphProtocol::isValidUrl($url, array('text/html', 'application/xhtml+xml'));
-                if (!empty($url)) {
-                    return true;
-                }
-            } else {
-                return true;
-            }
+        return $this->width;
+    }
+
+    /**
+     * Set the object width
+     *
+     * @param int $width width in pixels
+     */
+    public function setWidth($width)
+    {
+        if (is_int($width) && $width >  0) {
+            $this->width = $width;
         }
 
-        return false;
+        return $this;
+    }
+
+    /**
+     * @return int height in pixels
+     */
+    public function getHeight()
+    {
+        return $this->height;
+    }
+
+    /**
+     * Set the height of the referenced object in pixels
+     * @var int height of the referenced object in pixels
+     */
+    public function setHeight($height)
+    {
+        if (is_int($height) && $height > 0) {
+            $this->height = $height;
+        }
+
+        return $this;
     }
 }
