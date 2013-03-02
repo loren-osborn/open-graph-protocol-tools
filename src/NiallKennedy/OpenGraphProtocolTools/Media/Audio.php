@@ -10,6 +10,8 @@
 
 namespace NiallKennedy\OpenGraphProtocolTools\Media;
 
+use NiallKennedy\OpenGraphProtocolTools\Exceptions\Exception;
+
 /**
  * Audio file suitable for playback alongside the main linked content.
  * Structured properties representations of Open Graph protocol media.
@@ -29,7 +31,7 @@ class Audio extends Media
     public static function extensionToMediaType($extension)
     {
         if (empty($extension) || ! is_string($extension)) {
-            return;
+            throw new Exception("Invalid extension: " . var_export($extension, true));
         }
         if ($extension === 'swf') {
             return 'application/x-shockwave-flash';
@@ -40,6 +42,7 @@ class Audio extends Media
         } elseif ($extension === 'ogg' || $extension === 'oga') {
             return 'audio/ogg';
         }
+        throw new Exception("Unrecognized audio extension: " . var_export($extension, true));
     }
 
     /**
@@ -49,8 +52,10 @@ class Audio extends Media
      */
     public function setType( $type )
     {
-        if ($type === 'application/x-shockwave-flash' || substr_compare( $type, 'audio/', 0, 6 ) === 0) {
+        if ($type === 'application/x-shockwave-flash' || (is_string($type) && substr_compare( $type, 'audio/', 0, 6 ) === 0)) {
             $this->type = $type;
+        } else {
+            throw new Exception("Invalid  audio type: " . var_export($type, true));
         }
 
         return $this;

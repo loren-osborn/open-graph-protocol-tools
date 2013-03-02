@@ -10,6 +10,8 @@
 
 namespace NiallKennedy\OpenGraphProtocolTools\Objects;
 
+use NiallKennedy\OpenGraphProtocolTools\Exceptions\Exception;
+
 use DateTime;
 
 /**
@@ -95,11 +97,17 @@ class Video extends Object
     public function addActor($url, $role = '')
     {
         if (static::isValidUrl($url) && !in_array($url, $this->actor)) {
-            if (!empty($role) && is_string($role)) {
-                $this->actor[] = array($url, 'role' => $role);
+            if (!empty($role)) {
+                if (is_string($role)) {
+                    $this->actor[] = array($url, 'role' => $role);
+                } else {
+                    throw new Exception("Invalid role: " . var_export($role, true));
+                }
             } else {
                 $this->actor[] = $url;
             }
+        } else {
+            throw new Exception("Invalid actor uri: " . var_export($url, true));
         }
 
         return $this;
@@ -124,6 +132,8 @@ class Video extends Object
     {
         if (static::isValidUrl($url) && !in_array($url, $this->director)) {
             $this->director[] = $url;
+        } else {
+            throw new Exception("Invalid director uri: " . var_export($url, true));
         }
 
         return $this;
@@ -150,6 +160,8 @@ class Video extends Object
     {
         if (static::isValidUrl($url) && !in_array($url, $this->writer)) {
             $this->writer[] = $url;
+        } else {
+            throw new Exception("Invalid writer uri: " . var_export($url, true));
         }
 
         return $this;
@@ -174,6 +186,8 @@ class Video extends Object
     {
         if (is_int($duration) && $duration > 0) {
             $this->duration = $duration;
+        } else {
+            throw new Exception("Invalid duration: " . var_export($duration, true));
         }
 
         return $this;
@@ -200,6 +214,8 @@ class Video extends Object
             $this->release_date = static::datetimeToIso8601($release_date);
         } elseif (is_string($release_date) && strlen($release_date) >= 10) { // at least YYYY-MM-DD
             $this->release_date = $release_date;
+        } else {
+            throw new Exception("Invalid release date: " . var_export($release_date, true));
         }
 
         return $this;
@@ -224,6 +240,8 @@ class Video extends Object
     {
         if (is_string($tag) && !in_array($tag, $this->tag)) {
             $this->tag[] = $tag;
+        } else {
+            throw new Exception("Invalid tag: " . var_export($tag, true));
         }
 
         return $this;

@@ -10,6 +10,8 @@
 
 namespace NiallKennedy\OpenGraphProtocolTools\Media;
 
+use NiallKennedy\OpenGraphProtocolTools\Exceptions\Exception;
+
 /**
  * An image representing page content. Suitable for display alongside a summary of the webpage.
  * Structured properties representations of Open Graph protocol media.
@@ -28,7 +30,7 @@ class Image extends VisualMedia
     public static function extensionToMediaType( $extension )
     {
         if (empty($extension) || ! is_string($extension)) {
-            return;
+            throw new Exception("Invalid extension: " . var_export($extension, true));
         }
         if ($extension === 'jpeg' || $extension === 'jpg') {
             return 'image/jpeg';
@@ -41,6 +43,7 @@ class Image extends VisualMedia
         } elseif ($extension === 'ico') {
             return 'image/vnd.microsoft.icon';
         }
+        throw new Exception("Unrecognized image extension: " . var_export($extension, true));
     }
 
     /**
@@ -50,8 +53,10 @@ class Image extends VisualMedia
      */
     public function setType( $type )
     {
-        if (substr_compare( $type, 'image/', 0, 6 ) === 0) {
+        if (is_string($type) && (substr_compare( $type, 'image/', 0, 6 ) === 0)) {
             $this->type = $type;
+        } else {
+            throw new Exception("Invalid image type: " . var_export($type, true));
         }
 
         return $this;

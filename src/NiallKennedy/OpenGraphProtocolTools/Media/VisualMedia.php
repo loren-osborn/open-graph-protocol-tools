@@ -10,6 +10,8 @@
 
 namespace NiallKennedy\OpenGraphProtocolTools\Media;
 
+use NiallKennedy\OpenGraphProtocolTools\Exceptions\Exception;
+
 /**
  * Describe a media object that can be displayed on a region of the screen
  * Structured properties representations of Open Graph protocol media.
@@ -51,6 +53,8 @@ abstract class VisualMedia extends Media
     {
         if (is_int($width) && $width >  0) {
             $this->width = $width;
+        } else {
+            throw new Exception("Invalid width: " . var_export($width, true));
         }
 
         return $this;
@@ -72,6 +76,8 @@ abstract class VisualMedia extends Media
     {
         if (is_int($height) && $height > 0) {
             $this->height = $height;
+        } else {
+            throw new Exception("Invalid height: " . var_export($height, true));
         }
 
         return $this;

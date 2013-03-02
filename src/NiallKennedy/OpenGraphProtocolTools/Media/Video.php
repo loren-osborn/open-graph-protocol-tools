@@ -10,6 +10,8 @@
 
 namespace NiallKennedy\OpenGraphProtocolTools\Media;
 
+use NiallKennedy\OpenGraphProtocolTools\Exceptions\Exception;
+
 /**
  * A video that complements the webpage content.
  * Structured properties representations of Open Graph protocol media.
@@ -29,7 +31,7 @@ class Video extends VisualMedia
     public static function extensionToMediaType($extension)
     {
         if (empty($extension) || ! is_string($extension)) {
-            return;
+            throw new Exception("Invalid extension: " . var_export($extension, true));
         }
         if ($extension === 'swf') {
             return 'application/x-shockwave-flash';
@@ -40,6 +42,7 @@ class Video extends VisualMedia
         } elseif ($extension === 'webm') {
             return 'video/webm';
         }
+        throw new Exception("Unrecognized video extension: " . var_export($extension, true));
     }
 
     /**
@@ -49,8 +52,10 @@ class Video extends VisualMedia
      */
     public function setType($type)
     {
-        if ($type === 'application/x-shockwave-flash' || substr_compare( $type, 'video/', 0, 6 ) === 0) {
+        if ($type === 'application/x-shockwave-flash' || (is_string($type) && substr_compare( $type, 'video/', 0, 6 ) === 0)) {
             $this->type = $type;
+        } else {
+            throw new Exception("Invalid video type: " . var_export($type, true));
         }
 
         return $this;

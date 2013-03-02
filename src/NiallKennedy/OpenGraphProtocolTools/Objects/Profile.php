@@ -10,6 +10,8 @@
 
 namespace NiallKennedy\OpenGraphProtocolTools\Objects;
 
+use NiallKennedy\OpenGraphProtocolTools\Exceptions\Exception;
+
 /**
  * Open Graph protocol person (profile)
  *
@@ -69,6 +71,8 @@ class Profile extends Object
     {
         if (is_string($first_name) && !empty($first_name)) {
             $this->first_name = $first_name;
+        } else {
+            throw new Exception("Invalid first name: " . var_export($first_name, true));
         }
 
         return $this;
@@ -91,6 +95,8 @@ class Profile extends Object
     {
         if (is_string($last_name) && !empty($last_name)) {
             $this->last_name = $last_name;
+        } else {
+            throw new Exception("Invalid last name: " . var_export($last_name, true));
         }
 
         return $this;
@@ -113,6 +119,8 @@ class Profile extends Object
     {
         if (is_string($username) && !empty($username)) {
             $this->username = $username;
+        } else {
+            throw new Exception("Invalid username: " . var_export($username, true));
         }
 
         return $this;
@@ -135,6 +143,8 @@ class Profile extends Object
     {
         if (is_string($gender) && ($gender === 'male' || $gender === 'female')) {
             $this->gender = $gender;
+        } else {
+            throw new Exception("Invalid gender: " . var_export($gender, true));
         }
 
         return $this;

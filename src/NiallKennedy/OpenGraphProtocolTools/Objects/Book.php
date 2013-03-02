@@ -10,6 +10,8 @@
 
 namespace NiallKennedy\OpenGraphProtocolTools\Objects;
 
+use NiallKennedy\OpenGraphProtocolTools\Exceptions\Exception;
+
 use DateTime;
 
 /**
@@ -82,6 +84,8 @@ class Book extends Object
     {
         if (static::isValidUrl($author_uri) && !in_array($author_uri, $this->author)) {
             $this->author[] = $author_uri;
+        } else {
+            throw new Exception("Invalid author uri: " . var_export($author_uri, true));
         }
 
         return $this;
@@ -104,6 +108,8 @@ class Book extends Object
      */
     public function setISBN($isbn)
     {
+        $origIsbn = $isbn;
+        $valid    = false;
         if (is_string($isbn)) {
             $isbn = trim(str_replace('-', '', $isbn));
             if (strlen($isbn) === 10 && is_numeric( substr($isbn, 0 , 9) )) { // published before 2007
@@ -115,6 +121,7 @@ class Book extends Object
                 $check_digit = 11 - ($verifysum % 11);
                 if ($check_digit == $chars[9] || ($chars[9] == 'X' && $check_digit == 10)) {
                     $this->isbn = $isbn;
+                    $valid      = true;
                 }
             } elseif (strlen($isbn) === 13 && is_numeric(substr($isbn, 0, 12))) {
                 $verifysum = 0;
@@ -125,8 +132,12 @@ class Book extends Object
                 $check_digit = 10 - ($verifysum % 10);
                 if ($check_digit == $chars[12]) {
                     $this->isbn = $isbn;
+                    $valid      = true;
                 }
             }
+        }
+        if (!$valid) {
+            throw new Exception("invalid ISBN: " . var_export($origIsbn, true));
         }
 
         return $this;
@@ -153,6 +164,8 @@ class Book extends Object
             $this->release_date = static::datetimeToIso8601($release_date);
         } elseif (is_string($release_date) && strlen($release_date) >= 10) { // at least YYYY-MM-DD
             $this->release_date = $release_date;
+        } else {
+            throw new Exception("Invalid release date: " . var_export($release_date, true));
         }
 
         return $this;
@@ -177,6 +190,8 @@ class Book extends Object
     {
         if (is_string($tag) && !empty($tag) && !in_array($tag, $this->tag)) {
             $this->tag[] = $tag;
+        } else {
+            throw new Exception("Invalid tag: " . var_export($tag, true));
         }
 
         return $this;

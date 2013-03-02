@@ -10,6 +10,7 @@
 
 namespace NiallKennedy\OpenGraphProtocolTools\Media;
 
+use NiallKennedy\OpenGraphProtocolTools\Exceptions\Exception;
 use NiallKennedy\OpenGraphProtocolTools\OpenGraphProtocol;
 
 /**
@@ -72,6 +73,8 @@ abstract class Media
      */
     public function setURL($url)
     {
+        $origUrl = $url;
+        $valid   = false;
         if (is_string($url) && !empty($url)) {
             $url = trim($url);
             if (OpenGraphProtocol::VERIFY_URLS) {
@@ -79,7 +82,11 @@ abstract class Media
             }
             if (!empty($url)) {
                 $this->url = $url;
+                $valid     = true;
             }
+        }
+        if (!$valid) {
+            throw new Exception("invalid url: " . var_export($origUrl, true));
         }
 
         return $this;
@@ -111,6 +118,8 @@ abstract class Media
      */
     public function setSecureURL($url)
     {
+        $origUrl = $url;
+        $valid   = false;
         if (is_string($url) && !empty($url)) {
             $url = trim($url);
             if (OpenGraphProtocol::VERIFY_URLS) {
@@ -122,7 +131,11 @@ abstract class Media
             }
             if (!empty($url)) {
                 $this->secure_url = $url;
+                $valid            = true;
             }
+        }
+        if (!$valid) {
+            throw new Exception("invalid url: " . var_export($origUrl, true));
         }
 
         return $this;

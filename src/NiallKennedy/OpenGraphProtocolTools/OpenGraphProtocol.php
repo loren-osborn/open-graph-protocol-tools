@@ -10,6 +10,7 @@
 
 namespace NiallKennedy\OpenGraphProtocolTools;
 
+use NiallKennedy\OpenGraphProtocolTools\Exceptions\Exception;
 use NiallKennedy\OpenGraphProtocolTools\Media as OgptMedia;
 
 /**
@@ -424,6 +425,8 @@ class OpenGraphProtocol
     {
         if (is_string($type) && in_array($type, self::supportedTypes(true), true)) {
             $this->type = $type;
+        } else {
+            throw new Exception("Invalid type: " . var_export($type, true));
         }
 
         return $this;
@@ -440,15 +443,19 @@ class OpenGraphProtocol
     /**
      * @param String $title document title
      */
-    public function setTitle($title)
+    public function setTitle($title, $autoTruncate = false)
     {
         if (is_string($title)) {
             $title = trim($title);
-            if (strlen($title) > 128) {
+            if ((strlen($title) > 128) && $autoTruncate) {
                 $this->title = substr($title, 0, 128);
+            } elseif (strlen($title) > 128) {
+                throw new Exception("Title too long: " . var_export($title, true));
             } else {
                 $this->title = $title;
             }
+        } else {
+            throw new Exception("Invalid title: " . var_export($title, true));
         }
 
         return $this;
@@ -465,14 +472,19 @@ class OpenGraphProtocol
     /**
      * @param String $site_name Site name
      */
-    public function setSiteName($site_name)
+    public function setSiteName($site_name, $autoTruncate = false)
     {
         if ( is_string($site_name) && !empty($site_name) ) {
             $site_name = trim($site_name);
-            if (strlen($site_name) > 128)
+            if ((strlen($site_name) > 128) && $autoTruncate) {
                 $this->site_name = substr($site_name, 0, 128);
-            else
+            } elseif (strlen($site_name) > 128) {
+                throw new Exception("Site name too long: " . var_export($site_name, true));
+            } else {
                 $this->site_name = $site_name;
+            }
+        } else {
+            throw new Exception("Invalid site name: " . var_export($site_name, true));
         }
 
         return $this;
@@ -489,15 +501,19 @@ class OpenGraphProtocol
     /**
      * @param String $description Document description
      */
-    public function setDescription($description)
+    public function setDescription($description, $autoTruncate = false)
     {
         if (is_string($description) && !empty($description)) {
             $description = trim($description);
-            if (strlen($description) > 255) {
+            if ((strlen($description) > 255) && $autoTruncate) {
                 $this->description = substr($description, 0, 255);
+            } elseif (strlen($description) > 255) {
+                throw new Exception("Description too long: " . var_export($description, true));
             } else {
                 $this->description = $description;
             }
+        } else {
+            throw new Exception("Invalid description: " . var_export($description, true));
         }
 
         return $this;
@@ -516,6 +532,8 @@ class OpenGraphProtocol
      */
     public function setURL($url)
     {
+        $origUrl = $url;
+        $valid   = false;
         if (is_string($url) && !empty($url) ) {
             $url = trim($url);
             if (self::VERIFY_URLS) {
@@ -523,7 +541,11 @@ class OpenGraphProtocol
             }
             if (!empty($url)) {
                 $this->url = $url;
+                $valid     = true;
             }
+        }
+        if (!$valid) {
+            throw new Exception("invalid url: " . var_export($origUrl, true));
         }
 
         return $this;
@@ -541,6 +563,8 @@ class OpenGraphProtocol
     {
         if (in_array($determiner, array('a','an','auto','the'), true)) {
             $this->determiner = $determiner;
+        } else {
+            throw new Exception("Invalid determiner: " . var_export($determiner, true));
         }
 
         return $this;
@@ -561,6 +585,8 @@ class OpenGraphProtocol
     {
         if (is_string($locale) && in_array($locale, static::supportedLocales(true))) {
             $this->locale = $locale;
+        } else {
+            throw new Exception("Invalid locale: " . var_export($locale, true));
         }
 
         return $this;
@@ -584,7 +610,7 @@ class OpenGraphProtocol
     {
         $image_url = $image->getURL();
         if (empty($image_url)) {
-            return;
+            throw new Exception("Image must have a url to be valid");
         }
         $image->removeURL();
         $value = array($image_url, array($image));
@@ -615,7 +641,7 @@ class OpenGraphProtocol
     {
         $audio_url = $audio->getURL();
         if (empty($audio_url)) {
-            return;
+            throw new Exception("Audio must have a url to be valid");
         }
         $audio->removeURL();
         $value = array($audio_url, array($audio));
@@ -646,7 +672,7 @@ class OpenGraphProtocol
     {
         $video_url = $video->getURL();
         if (empty($video_url)) {
-            return;
+            throw new Exception("Video must have a url to be valid");
         }
         $video->removeURL();
         $value = array($video_url, array($video));

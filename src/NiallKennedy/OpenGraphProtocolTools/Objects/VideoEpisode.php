@@ -10,6 +10,8 @@
 
 namespace NiallKennedy\OpenGraphProtocolTools\Objects;
 
+use NiallKennedy\OpenGraphProtocolTools\Exceptions\Exception;
+
 /**
  * Video TV show.
  *
@@ -40,6 +42,8 @@ class VideoEpisode extends Video
     {
         if (static::isValidUrl($url)) {
             $this->series = $url;
+        } else {
+            throw new Exception("Invalid series uri: " . var_export($url, true));
         }
 
         return $this;

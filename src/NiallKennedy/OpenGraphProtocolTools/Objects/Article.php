@@ -10,6 +10,8 @@
 
 namespace NiallKennedy\OpenGraphProtocolTools\Objects;
 
+use NiallKennedy\OpenGraphProtocolTools\Exceptions\Exception;
+
 use DateTime;
 
 /**
@@ -100,6 +102,8 @@ class Article extends Object
             $this->published_time = static::datetimeToIso8601($pubdate);
         } elseif (is_string($pubdate) && strlen($pubdate) >= 10) { // at least YYYY-MM-DD
             $this->published_time = $pubdate;
+        } else {
+            throw new Exception("Invalid published time: " . var_export($pubdate, true));
         }
 
         return $this;
@@ -124,6 +128,8 @@ class Article extends Object
             $this->modified_time = static::datetimeToIso8601($updated);
         } elseif (is_string($updated) && strlen($updated) >= 10) { // at least YYYY-MM-DD
             $this->modified_time = $updated;
+        } else {
+            throw new Exception("Invalid modified time: " . var_export($updated, true));
         }
 
         return $this;
@@ -148,6 +154,8 @@ class Article extends Object
             $this->expiration_time = static::datetimeToIso8601($expires);
         } elseif (is_string($expires) && strlen($expires) >= 10) {
             $this->expiration_time = $expires;
+        } else {
+            throw new Exception("Invalid expiration time: " . var_export($expires, true));
         }
 
         return $this;
@@ -170,6 +178,8 @@ class Article extends Object
     {
         if (static::isValidUrl($author_uri) && !in_array($author_uri, $this->author)) {
             $this->author[] = $author_uri;
+        } else {
+            throw new Exception("Invalid author uri: " . var_export($author_uri, true));
         }
 
         return $this;
@@ -191,6 +201,8 @@ class Article extends Object
     {
         if (is_string($section) && !empty($section)) {
             $this->section = $section;
+        } else {
+            throw new Exception("Invalid section: " . var_export($section, true));
         }
 
         return $this;
@@ -213,6 +225,8 @@ class Article extends Object
     {
         if (is_string($tag) && !empty($tag)) {
             $this->tag[] = $tag;
+        } else {
+            throw new Exception("Invalid tag: " . var_export($tag, true));
         }
 
         return $this;
