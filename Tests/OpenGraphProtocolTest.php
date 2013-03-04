@@ -40,23 +40,24 @@ class OpenGraphProtocolTest extends PHPUnit_Framework_TestCase
         $this->assertNull(OpenGraphProtocol::buildHTML(array()), 'Empty array gives null');
         $this->assertEquals(('<meta property="og:test" content="default prefix">' . PHP_EOL), OpenGraphProtocol::buildHTML(array('test' => 'default prefix')), 'default prefix is correct');
         $input = array(
-            'car'    => 'red',
-            'truck'  => array(
+            'car'        => 'red',
+            'truck'      => array(
                 'black',
                 array(
-                    'year'   => array(1987),
-                    'wheels' => '4',
-                    'tires'  => 4,
+                    'year'       => array(1987),
+                    'wheels'     => '4',
+                    'tires'      => 4,
                 )
             ),
-            'object' => $this,
-            '6'      => 'prefix',
-            '7.0'    => 'lucky',
-            8        => 'my prefix',
-            9.0      => 'also prefix',
-            'ignore' => '',
-            'silent' => array(),
-            'html'   => '<span class="custom">entity &amp; testing</span>'
+            'object'     => $this,
+            '6'          => 'prefix',
+            '7.0'        => 'lucky',
+            8            => 'my prefix',
+            9.0          => 'also prefix',
+            'ignore'     => '',
+            'silent'     => array(),
+            'html'       => '<span class="custom">entity &amp; testing</span>',
+            'multi_line' => 'line 1' . PHP_EOL . 'line 2' . PHP_EOL . 'line 3'
         );
         $expected =
             '<meta property="customPrefix:car" '                   . 'content="red">' . PHP_EOL .
@@ -72,7 +73,8 @@ class OpenGraphProtocolTest extends PHPUnit_Framework_TestCase
             '<meta property="customPrefix:7.0" '                   . 'content="lucky">' . PHP_EOL .
             '<meta property="customPrefix" '                       . 'content="my prefix">' . PHP_EOL .
             '<meta property="customPrefix" '                       . 'content="also prefix">' . PHP_EOL .
-            '<meta property="customPrefix:html" '                  . 'content="&lt;span class=&quot;custom&quot;&gt;entity &amp;amp; testing&lt;/span&gt;">' . PHP_EOL;
+            '<meta property="customPrefix:html" '                  . 'content="&lt;span class=&quot;custom&quot;&gt;entity &amp;amp; testing&lt;/span&gt;">' . PHP_EOL .
+            '<meta property="customPrefix:multi_line" '            . 'content="line 1&#10;line 2&#10;line 3">' . PHP_EOL;
         $this->assertEquals($expected, OpenGraphProtocol::buildHTML($input, 'customPrefix'), 'multi-behaviour test');
     }
 

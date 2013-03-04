@@ -133,6 +133,11 @@ class OpenGraphProtocol
         return function_exists('gettext') ? gettext($text) : $text;
     }
 
+    private static function customHtmlSpecialChars($string)
+    {
+        return preg_replace('/[\\r\\n]+/i', '&#10;', htmlspecialchars($string));
+    }
+
     /**
      * Build Open Graph protocol HTML markup based on an array
      *
@@ -158,9 +163,9 @@ class OpenGraphProtocol
             } elseif (!empty($content)) {
                 $s .= '<meta ' . self::META_ATTR . '="' . $prefix;
                 if (is_string($property) && !empty($property)) {
-                    $s .= ':' . htmlspecialchars( $property );
+                    $s .= ':' . self::customHtmlSpecialChars( $property );
                 }
-                $s .= '" content="' . htmlspecialchars($content) . '">' . PHP_EOL;
+                $s .= '" content="' . self::customHtmlSpecialChars($content) . '">' . PHP_EOL;
             }
         }
 
