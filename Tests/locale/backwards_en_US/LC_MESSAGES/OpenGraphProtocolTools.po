@@ -1,0 +1,500 @@
+msgid ""
+msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Language: backwards\n"
+"X-Source-Language: en_US\n"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:180
+msgid "Activities"
+msgstr "seitivitcA"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:181
+msgid "Activity"
+msgstr "ytivitcA"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:182
+msgid "Sport"
+msgstr "tropS"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:184
+msgid "Businesses"
+msgstr "sessenisuB"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:185
+msgid "Company"
+msgstr "ynapmoC"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:186
+msgid "Bar"
+msgstr "raB"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:187
+msgid "Cafe"
+msgstr "efaC"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:188
+msgid "Hotel"
+msgstr "letoH"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:189
+msgid "Restaurant"
+msgstr "tnaruatseR"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:191
+msgid "Groups"
+msgstr "spuorG"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:192
+msgid "Cause"
+msgstr "esuaC"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:193
+msgid "Sports league"
+msgstr "eugael stropS"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:194
+msgid "Sports team"
+msgstr "maet stropS"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:196
+msgid "Organizations"
+msgstr "snoitazinagrO"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:197
+msgid "Band"
+msgstr "dnaB"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:198
+msgid "Government"
+msgstr "tnemnrevoG"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:199
+msgid "Non-profit"
+msgstr "tiforp-noN"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:200
+msgid "School"
+msgstr "loohcS"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:201
+msgid "University"
+msgstr "ytisrevinU"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:203
+msgid "People"
+msgstr "elpoeP"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:204
+msgid "Actor or actress"
+msgstr "ssertca ro rotcA"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:205
+msgid "Athlete"
+msgstr "etelhtA"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:206
+msgid "Author"
+msgstr "rohtuA"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:207
+msgid "Director"
+msgstr "rotceriD"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:208
+msgid "Musician"
+msgstr "naicisuM"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:209
+msgid "Politician"
+msgstr "naicitiloP"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:210
+msgid "Profile"
+msgstr "eliforP"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:211
+msgid "Public Figure"
+msgstr "erugiF cilbuP"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:213
+msgid "Places"
+msgstr "secalP"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:214
+msgid "City or locality"
+msgstr "ytilacol ro ytiC"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:215
+msgid "Country"
+msgstr "yrtnuoC"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:216
+msgid "Landmark"
+msgstr "kramdnaL"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:217
+msgid "State or province"
+msgstr "ecnivorp ro etatS"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:219
+msgid "Products and Entertainment"
+msgstr "tnemniatretnE dna stcudorP"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:220
+msgid "Music Album"
+msgstr "mublA cisuM"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:221
+msgid "Book"
+msgstr "kooB"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:222
+msgid "Drink"
+msgstr "knirD"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:223
+msgid "Video episode"
+msgstr "edosipe oediV"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:224
+msgid "Food"
+msgstr "dooF"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:225
+msgid "Game"
+msgstr "emaG"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:226
+msgid "Movie"
+msgstr "eivoM"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:227
+msgid "Music playlist"
+msgstr "tsilyalp cisuM"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:228
+msgid "Product"
+msgstr "tcudorP"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:230
+msgid "Radio station"
+msgstr "noitats oidaR"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:231
+msgid "Song"
+msgstr "gnoS"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:232
+msgid "Television show"
+msgstr "wohs noisiveleT"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:233
+msgid "Video"
+msgstr "oediV"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:235
+msgid "Websites"
+msgstr "setisbeW"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:236
+msgid "Article"
+msgstr "elcitrA"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:237
+msgid "Blog"
+msgstr "golB"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:238
+msgid "Website"
+msgstr "etisbeW"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:264
+msgid "Afrikaans"
+msgstr "snaakirfA"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:265
+msgid "Arabic"
+msgstr "cibarA"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:266
+msgid "Azeri"
+msgstr "irezA"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:267
+msgid "Belarusian"
+msgstr "naisuraleB"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:268
+msgid "Bulgarian"
+msgstr "nairagluB"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:269
+msgid "Bengali"
+msgstr "ilagneB"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:270
+msgid "Bosnian"
+msgstr "nainsoB"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:271
+msgid "Catalan"
+msgstr "nalataC"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:272
+msgid "Czech"
+msgstr "hcezC"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:273
+msgid "Welsh"
+msgstr "hsleW"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:274
+msgid "Danish"
+msgstr "hsinaD"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:275
+msgid "German"
+msgstr "namreG"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:276
+msgid "Greek"
+msgstr "keerG"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:277
+msgid "English (UK)"
+msgstr ")KU( hsilgnE"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:278
+msgid "English (US)"
+msgstr ")SU( hsilgnE"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:279
+msgid "Esperanto"
+msgstr "otnarepsE"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:280
+msgid "Spanish (Spain)"
+msgstr ")niapS( hsinapS"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:281
+msgid "Spanish (Latin America)"
+msgstr ")aciremA nitaL( hsinapS"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:282
+msgid "Estonian"
+msgstr "nainotsE"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:283
+msgid "Basque"
+msgstr "euqsaB"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:284
+msgid "Persian"
+msgstr "naisreP"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:285
+msgid "Finnish"
+msgstr "hsinniF"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:286
+msgid "Faroese"
+msgstr "eseoraF"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:287
+msgid "French (Canada)"
+msgstr ")adanaC( hcnerF"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:288
+msgid "French (France)"
+msgstr ")ecnarF( hcnerF"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:289
+msgid "Frisian"
+msgstr "naisirF"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:290
+msgid "Irish"
+msgstr "hsirI"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:291
+msgid "Galician"
+msgstr "naicilaG"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:292
+msgid "Hebrew"
+msgstr "werbeH"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:293
+msgid "Hindi"
+msgstr "idniH"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:294
+msgid "Croatian"
+msgstr "naitaorC"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:295
+msgid "Hungarian"
+msgstr "nairagnuH"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:296
+msgid "Armenian"
+msgstr "nainemrA"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:297
+msgid "Indonesian"
+msgstr "naisenodnI"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:298
+msgid "Icelandic"
+msgstr "cidnalecI"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:299
+msgid "Italian"
+msgstr "nailatI"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:300
+msgid "Japanese"
+msgstr "esenapaJ"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:301
+msgid "Georgian"
+msgstr "naigroeG"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:302
+msgid "Korean"
+msgstr "naeroK"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:303
+msgid "Kurdish"
+msgstr "hsidruK"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:304
+msgid "Latin"
+msgstr "nitaL"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:305
+msgid "Lithuanian"
+msgstr "nainauhtiL"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:306
+msgid "Latvian"
+msgstr "naivtaL"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:307
+msgid "Macedonian"
+msgstr "nainodecaM"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:308
+msgid "Malayalam"
+msgstr "malayalaM"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:309
+msgid "Malay"
+msgstr "yalaM"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:310
+msgid "Norwegian (bokmal)"
+msgstr ")lamkob( naigewroN"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:311
+msgid "Nepali"
+msgstr "ilapeN"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:312
+msgid "Dutch"
+msgstr "hctuD"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:313
+msgid "Norwegian (nynorsk)"
+msgstr ")ksronyn( naigewroN"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:314
+msgid "Punjabi"
+msgstr "ibajnuP"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:315
+msgid "Polish"
+msgstr "hsiloP"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:316
+msgid "Pashto"
+msgstr "othsaP"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:317
+msgid "Portuguese (Brazil)"
+msgstr ")lizarB( eseugutroP"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:318
+msgid "Romanian"
+msgstr "nainamoR"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:319
+msgid "Russian"
+msgstr "naissuR"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:320
+msgid "Slovak"
+msgstr "kavolS"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:321
+msgid "Slovenian"
+msgstr "nainevolS"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:322
+msgid "Albanian"
+msgstr "nainablA"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:323
+msgid "Serbian"
+msgstr "naibreS"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:324
+msgid "Swedish"
+msgstr "hsidewS"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:325
+msgid "Swahili"
+msgstr "ilihawS"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:326
+msgid "Tamil"
+msgstr "limaT"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:327
+msgid "Telugu"
+msgstr "uguleT"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:328
+msgid "Thai"
+msgstr "iahT"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:329
+msgid "Filipino"
+msgstr "onipiliF"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:330
+msgid "Turkish"
+msgstr "hsikruT"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:331
+msgid "Ukrainian"
+msgstr "nainiarkU"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:332
+msgid "Vietnamese"
+msgstr "esemanteiV"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:333
+msgid "Simplified Chinese (China)"
+msgstr ")anihC( esenihC deifilpmiS"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:334
+msgid "Traditional Chinese (Hong Kong)"
+msgstr ")gnoK gnoH( esenihC lanoitidarT"
+
+#: ./src/NiallKennedy/OpenGraphProtocolTools/OpenGraphProtocol.php:335
+msgid "Traditional Chinese (Taiwan)"
+msgstr ")nawiaT( esenihC lanoitidarT"

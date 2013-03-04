@@ -125,3 +125,7 @@ foreach ( $ogp_objects as $ogp_object ) {
 <?php echo rtrim( $meta, PHP_EOL ); ?>
 </head>
 ```
+
+### Notes on Localization
+
+https://github.com/josscrowcroft/php.mo was used to convert gettext .po files to .mo files
