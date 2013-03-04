@@ -3,11 +3,11 @@
  * Open Graph Protocol Tools
  *
  * This is the phpunit bootstrap file which loads the composer autoloader.
- * It is also used to load the composer autoloader for the compatibility layer. 
+ * It is also used to load the composer autoloader for the compatibility layer.
  *
  * @package open-graph-protocol-tools
  * @author Niall Kennedy <niall@niallkennedy.com>
- * @version 2.0
+ * @version 1.99.0 (working toward 2.0 release)
  * @copyright Public Domain
  */
 

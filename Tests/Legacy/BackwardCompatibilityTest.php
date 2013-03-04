@@ -4,7 +4,7 @@
  *
  * @package open-graph-protocol-tools
  * @author Niall Kennedy <niall@niallkennedy.com>
- * @version 2.0
+ * @version 1.99.0 (working toward 2.0 release)
  * @copyright Public Domain
  */
 
@@ -44,7 +44,7 @@ class BackwardCompatibilityTest extends PHPUnit_Framework_TestCase
             require $includeFile;
             restore_error_handler();
             $errorString = '';
-            foreach($errorHistory as $event) {
+            foreach ($errorHistory as $event) {
                 $errorString .= "\n" . $this->errorLevelToString($event[0]) . ": {$event[1]} in {$event[2]}:{$event[3]}";
             }
             $expectedErrorMessage = 'Please configure NiallKennedy\\OpenGraphProtocolTools with your autoloader';
@@ -277,8 +277,7 @@ class BackwardCompatibilityTest extends PHPUnit_Framework_TestCase
             }
         }
         $result = '';
-        foreach($errorLevels as $value => $name)
-        {
+        foreach ($errorLevels as $value => $name) {
             if (($level & $value) == $value) {
                 $result[] = $name;
                 $level -= $value;
@@ -287,6 +286,7 @@ class BackwardCompatibilityTest extends PHPUnit_Framework_TestCase
         if (($level != 0) || (count($result) == 0)) {
             $result[] = $level;
         }
+
         return implode('|', $result);
     }
 
@@ -297,6 +297,7 @@ class BackwardCompatibilityTest extends PHPUnit_Framework_TestCase
         $x = ((($x >> 4) + $x) & 0x0f0f0f0f);
         $x += ($x >> 8);
         $x += ($x >> 16);
+
         return($x & 0x0000003f);
     }
 }

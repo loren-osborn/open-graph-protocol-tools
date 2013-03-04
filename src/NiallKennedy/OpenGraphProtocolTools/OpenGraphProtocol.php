@@ -4,7 +4,7 @@
  *
  * @package open-graph-protocol-tools
  * @author Niall Kennedy <niall@niallkennedy.com>
- * @version 2.0
+ * @version 1.99.0 (working toward 2.0 release)
  * @copyright Public Domain
  */
 
@@ -23,7 +23,7 @@ class OpenGraphProtocol
      * Version
      * @var string
      */
-    const VERSION = '2.0';
+    const VERSION = '1.99.0';
 
     /**
      * Should we remotely request each referenced URL to make sure it exists and returns the expected Internet media type?

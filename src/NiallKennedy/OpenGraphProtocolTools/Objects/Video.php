@@ -4,7 +4,7 @@
  *
  * @package open-graph-protocol-tools
  * @author Niall Kennedy <niall@niallkennedy.com>
- * @version 2.0
+ * @version 1.99.0 (working toward 2.0 release)
  * @copyright Public Domain
  */
 
