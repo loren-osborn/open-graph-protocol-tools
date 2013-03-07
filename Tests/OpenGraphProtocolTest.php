@@ -564,6 +564,13 @@ class OpenGraphProtocolTest extends PHPUnit_Framework_TestCase
             $this->assertInstanceOf('NiallKennedy\OpenGraphProtocolTools\Exceptions\Exception', $e, 'correct exception');
             $this->assertEquals('Invalid ' . $humanReadable . ': NULL', $e->getMessage(), 'correct exception');
         }
+        try {
+            $ogpt->$setter(array());
+            $this->fail('expected invalid type exception');
+        } catch (OgptException $e) {
+            $this->assertInstanceOf('NiallKennedy\OpenGraphProtocolTools\Exceptions\Exception', $e, 'correct exception');
+            $this->assertEquals('Invalid ' . $humanReadable . ": array (\n)", $e->getMessage(), 'correct exception');
+        }
         $ogpt->$setter(str_repeat('a', $maxLength));
         $this->assertEquals(str_repeat('a', $maxLength), $ogpt->$getter(), 'correct value');
         try {
@@ -578,5 +585,50 @@ class OpenGraphProtocolTest extends PHPUnit_Framework_TestCase
         $ogpt->$setter('War & Peace');
         $this->assertEquals('War & Peace', $ogpt->$getter(), 'correct value');
         $this->assertEquals('<meta property="' . $property . '" content="War &amp; Peace">', $ogpt->toHTML(), 'correct value');
+    }
+
+    public function getSetTestedStringProperties()
+    {
+        $this->assertFalse(OpenGraphProtocol::VERIFY_URLS, 'ensure that we\'re not validating urls');
+        $invalidUrls = array();
+        if (OpenGraphProtocol::VERIFY_URLS) { /* This is disabled */
+            $invalidUrls[] = 'This is not a url';
+        }
+
+        return array(
+            array('setURL',        'getURL',        'url',        'og:url',        $invalidUrls,                                          array('http://www.google.com/search?q=widget', 'https://www.bankofamerica.com')),
+            array('setDeterminer', 'getDeterminer', 'determiner', 'og:determiner', array('der','die','das', 'its', 'their'),              array('a','an','auto','the')),
+            array('setLocale',     'getLocale',     'locale',     'og:locale',     array('English', 'Pig Latin', 'Welsch', 'ISO-8859-1'), array('fy_NL', 'ga_IE', 'gl_ES', 'he_IL', 'hi_IN'))
+        );
+    }
+
+    /**
+     * @dataProvider getSetTestedStringProperties
+     */
+    public function testSetTestedStringProperties($setter, $getter, $humanReadable, $property, $invalidValues, $validValues)
+    {
+        $ogpt = new OpenGraphProtocol();
+        $invalidValueMap = array(
+            'NULL'       => null,
+            "array (\n)" => array(),
+            "''"         => ''
+        );
+        foreach ($invalidValues as $invalidString) {
+            $invalidValueMap["'{$invalidString}'"] = $invalidString;
+        }
+        foreach ($invalidValueMap as $stringRepresentation => $invalidInputValue) {
+            try {
+                $ogpt->$setter($invalidInputValue);
+                $this->fail('expected invalid type exception');
+            } catch (OgptException $e) {
+                $this->assertInstanceOf('NiallKennedy\OpenGraphProtocolTools\Exceptions\Exception', $e, 'correct exception');
+                $this->assertEquals("Invalid {$humanReadable}: {$stringRepresentation}", $e->getMessage(), 'correct exception');
+            }
+        }
+        foreach ($validValues as $validString) {
+            $ogpt->$setter($validString);
+            $this->assertEquals($validString, $ogpt->$getter(), 'correct value');
+            $this->assertEquals('<meta property="' . $property . '" content="' . $validString . '">', $ogpt->toHTML(), 'correct value');
+        }
     }
 }

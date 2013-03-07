@@ -550,7 +550,7 @@ class OpenGraphProtocol
             }
         }
         if (!$valid) {
-            throw new Exception("invalid url: " . var_export($origUrl, true));
+            throw new Exception("Invalid url: " . var_export($origUrl, true));
         }
 
         return $this;
