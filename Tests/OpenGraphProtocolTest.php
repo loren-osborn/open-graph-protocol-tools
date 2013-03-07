@@ -537,7 +537,7 @@ class OpenGraphProtocolTest extends PHPUnit_Framework_TestCase
             $this->assertInstanceOf('NiallKennedy\OpenGraphProtocolTools\Exceptions\Exception', $e, 'correct exception');
             $this->assertEquals('Invalid type: \'not_a_valid_type\'', $e->getMessage(), 'correct exception');
         }
-        $ogpt->setType('university');
+        $this->assertEquals($ogpt->setType('university'), $ogpt, 'should return self');
         $this->assertEquals('university', $ogpt->getType(), 'correct value');
         $this->assertEquals('<meta property="og:type" content="university">', $ogpt->toHTML(), 'correct value');
     }
@@ -580,9 +580,9 @@ class OpenGraphProtocolTest extends PHPUnit_Framework_TestCase
             $this->assertInstanceOf('NiallKennedy\OpenGraphProtocolTools\Exceptions\Exception', $e, 'correct exception');
             $this->assertEquals(ucfirst($humanReadable) . ' too long: \'' . str_repeat('a', ($maxLength + 1)) . '\'', $e->getMessage(), 'correct exception');
         }
-        $ogpt->$setter(str_repeat('a', ($maxLength + 1)), true);
+        $this->assertEquals($ogpt->$setter(str_repeat('a', ($maxLength + 1)), true), $ogpt, 'should return self');
         $this->assertEquals(str_repeat('a', $maxLength), $ogpt->$getter(), 'correct value');
-        $ogpt->$setter('War & Peace');
+        $this->assertEquals($ogpt->$setter('War & Peace'), $ogpt, 'should return self');
         $this->assertEquals('War & Peace', $ogpt->$getter(), 'correct value');
         $this->assertEquals('<meta property="' . $property . '" content="War &amp; Peace">', $ogpt->toHTML(), 'correct value');
     }
@@ -626,7 +626,7 @@ class OpenGraphProtocolTest extends PHPUnit_Framework_TestCase
             }
         }
         foreach ($validValues as $validString) {
-            $ogpt->$setter($validString);
+            $this->assertEquals($ogpt->$setter($validString), $ogpt, 'should return self');
             $this->assertEquals($validString, $ogpt->$getter(), 'correct value');
             $this->assertEquals('<meta property="' . $property . '" content="' . $validString . '">', $ogpt->toHTML(), 'correct value');
         }
