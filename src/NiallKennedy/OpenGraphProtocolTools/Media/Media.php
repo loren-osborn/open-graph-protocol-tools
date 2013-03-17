@@ -108,7 +108,7 @@ abstract class Media
      */
     public function getSecureURL()
     {
-        return $this->url;
+        return $this->secure_url;
     }
 
     /**

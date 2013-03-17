@@ -520,28 +520,6 @@ class OpenGraphProtocolTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('', $empty->toHTML(), 'Empty object gives no output');
     }
 
-    public function testSetType()
-    {
-        $ogpt = new OpenGraphProtocol();
-        try {
-            $ogpt->setType(null);
-            $this->fail('expected invalid type exception');
-        } catch (OgptException $e) {
-            $this->assertInstanceOf('NiallKennedy\OpenGraphProtocolTools\Exceptions\Exception', $e, 'correct exception');
-            $this->assertEquals('Invalid type: NULL', $e->getMessage(), 'correct exception');
-        }
-        try {
-            $ogpt->setType('not_a_valid_type');
-            $this->fail('expected invalid type exception');
-        } catch (OgptException $e) {
-            $this->assertInstanceOf('NiallKennedy\OpenGraphProtocolTools\Exceptions\Exception', $e, 'correct exception');
-            $this->assertEquals('Invalid type: \'not_a_valid_type\'', $e->getMessage(), 'correct exception');
-        }
-        $this->assertEquals($ogpt->setType('university'), $ogpt, 'should return self');
-        $this->assertEquals('university', $ogpt->getType(), 'correct value');
-        $this->assertEquals('<meta property="og:type" content="university">', $ogpt->toHTML(), 'correct value');
-    }
-
     public function getLengthLimitedProperties()
     {
         return array(
@@ -596,18 +574,23 @@ class OpenGraphProtocolTest extends PHPUnit_Framework_TestCase
         }
 
         return array(
-            array('setURL',        'getURL',        'url',        'og:url',        $invalidUrls,                                          array('http://www.google.com/search?q=widget', 'https://www.bankofamerica.com')),
-            array('setDeterminer', 'getDeterminer', 'determiner', 'og:determiner', array('der','die','das', 'its', 'their'),              array('a','an','auto','the')),
-            array('setLocale',     'getLocale',     'locale',     'og:locale',     array('English', 'Pig Latin', 'Welsch', 'ISO-8859-1'), array('fy_NL', 'ga_IE', 'gl_ES', 'he_IL', 'hi_IN'))
+            array('Type',       array('not_a_valid_type'),                             array('university', 'cafe', 'video.tv_show')                                   ),
+            array('URL',        $invalidUrls,                                          array('http://www.google.com/search?q=widget', 'https://www.bankofamerica.com')),
+            array('Determiner', array('der','die','das', 'its', 'their'),              array('a','an','auto','the')                                                   ),
+            array('Locale',     array('English', 'Pig Latin', 'Welsch', 'ISO-8859-1'), array('fy_NL', 'ga_IE', 'gl_ES', 'he_IL', 'hi_IN')                             )
         );
     }
 
     /**
      * @dataProvider getSetTestedStringProperties
      */
-    public function testSetTestedStringProperties($setter, $getter, $humanReadable, $property, $invalidValues, $validValues)
+    public function testSetTestedStringProperties($propertyName, $invalidValues, $validValues)
     {
-        $ogpt = new OpenGraphProtocol();
+        $setter        = "set{$propertyName}";
+        $getter        = "get{$propertyName}";
+        $humanReadable = strtolower($propertyName);
+        $property      = 'og:' . strtolower($propertyName);
+        $ogpt          = new OpenGraphProtocol();
         $invalidValueMap = array(
             'NULL'       => null,
             "array (\n)" => array(),
@@ -629,6 +612,54 @@ class OpenGraphProtocolTest extends PHPUnit_Framework_TestCase
             $this->assertEquals($ogpt->$setter($validString), $ogpt, 'should return self');
             $this->assertEquals($validString, $ogpt->$getter(), 'correct value');
             $this->assertEquals('<meta property="' . $property . '" content="' . $validString . '">', $ogpt->toHTML(), 'correct value');
+        }
+    }
+
+    /**
+     * @ dataProvider getMediaToAdd
+     */
+    public function getMediaToAdd()
+    {
+        return array(
+            array('NiallKennedy\\OpenGraphProtocolTools\\Media\\Image', 'png', 'image'),
+            array('NiallKennedy\\OpenGraphProtocolTools\\Media\\Audio', 'mp3', 'audio'),
+            array('NiallKennedy\\OpenGraphProtocolTools\\Media\\Video', 'mov', 'video')
+        );
+    }
+
+    /**
+     * @dataProvider getMediaToAdd
+     */
+    public function testAddMedia($class, $extension, $kind)
+    {
+        $getter = 'get' . ucfirst($kind);
+        $setter = 'add' . ucfirst($kind);
+        $ogpt = new OpenGraphProtocol();
+        $this->assertNull($ogpt->$getter(), 'initial value');
+        $mediaPaths = array('/my' . ucfirst($kind) . ".{$extension}", '/other' . ucfirst($kind) . ".{$extension}");
+        foreach ($mediaPaths as $index => $contentPath) {
+            $image = new $class();
+            $image->setURL("http://localhost{$contentPath}");
+            $image->setSecureURL("https://localhost{$contentPath}");
+            $ogpt->$setter($image);
+            $mediaList = $ogpt->$getter();
+            $expectedHtmlParts = array();
+            $this->assertInternalType('array', $mediaList, 'correct type');
+            $this->assertCount(1 + $index, $mediaList, 'correct image count');
+            for ($i = 0; $i <= $index; $i++) {
+                $this->assertInternalType('array', $mediaList[$i], 'correct type');
+                $this->assertCount(2, $mediaList[$i], 'correct item count');
+                $this->assertEquals("http://localhost{$mediaPaths[$i]}", $mediaList[$i][0], 'correct item count');
+                $this->assertInternalType('array', $mediaList[$i][1], 'correct type');
+                $this->assertCount(1, $mediaList[$i][1], 'correct count');
+                $this->assertInstanceOf($class, $mediaList[$i][1][0], 'correct class');
+                $this->assertNull($mediaList[$i][1][0]->getURL(), 'Url unset');
+                $this->assertEquals("https://localhost{$mediaPaths[$i]}", $mediaList[$i][1][0]->getSecureURL(), 'correct value');
+                $expectedHtmlParts[] =
+                      "<meta property=\"og:{$kind}\" content=\"http://localhost{$mediaPaths[$i]}\">\n" .
+                    "<meta property=\"og:{$kind}:secure_url\" content=\"https://localhost{$mediaPaths[$i]}\">";
+            }
+            $this->assertEquals(join("\n", $expectedHtmlParts), $ogpt->toHTML(), 'correct value');
         }
     }
 }
