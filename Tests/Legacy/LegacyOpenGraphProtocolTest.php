@@ -95,9 +95,9 @@ class LegacyOpenGraphProtocolTest extends PHPUnit_Framework_TestCase
             // Choose domain
             textdomain("OpenGraphProtocolTools");
         }
-        $flatOutput            = OpenGraphProtocol::supportedTypes(true);
-        $nestedOutput          = OpenGraphProtocol::supportedTypes(false);
-        $defaultOutput         = OpenGraphProtocol::supportedTypes();
+        $flatOutput            = OpenGraphProtocol::supported_types(true);
+        $nestedOutput          = OpenGraphProtocol::supported_types(false);
+        $defaultOutput         = OpenGraphProtocol::supported_types();
         $expectedFlatOutput    = array(
             'activity',            'sport',               'company',             'bar',                 'cafe',
             'hotel',               'restaurant',          'cause',               'sports_league',       'sports_team',
@@ -195,7 +195,7 @@ class LegacyOpenGraphProtocolTest extends PHPUnit_Framework_TestCase
             // Translation is looking for in ./locale/backwards_en_US/LC_MESSAGES/OpenGraphProtocolTools.mo now
 
             // Print a test message
-            $backwardsNestedOutput          = OpenGraphProtocol::supportedTypes(false);
+            $backwardsNestedOutput          = OpenGraphProtocol::supported_types(false);
             $expectedBackwardsNestedOutput  = array(
                 'seitivitcA' => array(
                     'activity'       => 'ytivitcA',
@@ -282,9 +282,9 @@ class LegacyOpenGraphProtocolTest extends PHPUnit_Framework_TestCase
             // Choose domain
             textdomain("OpenGraphProtocolTools");
         }
-        $outputKeys         = OpenGraphProtocol::supportedLocales(true);
-        $outputAll          = OpenGraphProtocol::supportedLocales(false);
-        $outputDefault      = OpenGraphProtocol::supportedLocales();
+        $outputKeys         = OpenGraphProtocol::supported_locales(true);
+        $outputAll          = OpenGraphProtocol::supported_locales(false);
+        $outputDefault      = OpenGraphProtocol::supported_locales();
         $expectedOutputKeys = array(
             'af_ZA',               'ar_AR',               'az_AZ',               'be_BY',               'bg_BG',
             'bn_IN',               'bs_BA',               'ca_ES',               'cs_CZ',               'cy_GB',
@@ -400,7 +400,7 @@ class LegacyOpenGraphProtocolTest extends PHPUnit_Framework_TestCase
             // Translation is looking for in ./locale/backwards_en_US/LC_MESSAGES/OpenGraphProtocolTools.mo now
 
             // Print a test message
-            $backwardsOutputAll         = OpenGraphProtocol::supportedLocales(false);
+            $backwardsOutputAll         = OpenGraphProtocol::supported_locales(false);
             $expectedBackwardsOutputAll = array(
                 'af_ZA' => 'snaakirfA',
                 'ar_AR' => 'cibarA',
@@ -488,32 +488,32 @@ class LegacyOpenGraphProtocolTest extends PHPUnit_Framework_TestCase
 
     public function testIsValidUrl()
     {
-        $this->assertEquals('', OpenGraphProtocol::isValidUrl(''), 'Empty string gives empty string');
-        $this->assertEquals('', OpenGraphProtocol::isValidUrl($this), 'non-string gives empty string');
-        $this->assertEquals('', OpenGraphProtocol::isValidUrl('not a url'), 'non-URL gives empty string');
+        $this->assertEquals('', OpenGraphProtocol::is_valid_url(''), 'Empty string gives empty string');
+        $this->assertEquals('', OpenGraphProtocol::is_valid_url($this), 'non-string gives empty string');
+        $this->assertEquals('', OpenGraphProtocol::is_valid_url('not a url'), 'non-URL gives empty string');
         $this->assertEquals(
             'http://php.net/downloads.php/',
-            OpenGraphProtocol::isValidUrl('http://php.net/downloads.php/'),
+            OpenGraphProtocol::is_valid_url('http://php.net/downloads.php/'),
             'valid url gives itself'
         );
         $this->assertEquals(
             'http://php.net/downloads.php?param=1234',
-            OpenGraphProtocol::isValidUrl('http://php.net/downloads.php?param=1234'),
+            OpenGraphProtocol::is_valid_url('http://php.net/downloads.php?param=1234'),
             'valid url gives itself'
         );
         $this->assertEquals(
             'http://php.net/downloads.php#bookmark',
-            OpenGraphProtocol::isValidUrl('http://php.net/downloads.php#bookmark'),
+            OpenGraphProtocol::is_valid_url('http://php.net/downloads.php#bookmark'),
             'valid url gives itself'
         );
         $this->assertEquals(
             'http://php.net/downloads.php?param=1234#bookmark',
-            OpenGraphProtocol::isValidUrl('http://php.net/downloads.php?param=1234#bookmark'),
+            OpenGraphProtocol::is_valid_url('http://php.net/downloads.php?param=1234#bookmark'),
             'valid url gives itself'
         );
         $this->assertEquals(
             'https://www.google.com/',
-            OpenGraphProtocol::isValidUrl('https://www.google.com/'),
+            OpenGraphProtocol::is_valid_url('https://www.google.com/'),
             'valid url gives itself'
         );
     }

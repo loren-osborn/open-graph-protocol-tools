@@ -172,6 +172,11 @@ class BackwardCompatibility
 
     public static function inflectStaticMethodName($name)
     {
+        if (($name != 'buildHTML') && (preg_match('/[A-Z]/', $name))) {
+            // legacy names are all lower case
+            return null;
+        }
+
         return lcfirst(implode('', array_map('ucfirst', explode('_', $name))));
     }
 }
