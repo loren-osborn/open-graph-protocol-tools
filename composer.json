@@ -25,6 +25,7 @@
     "autoload": {
         "psr-0": {
             "NiallKennedy\\OpenGraphProtocolTools": "src/"
-        }
+        },
+        "classmap": ["Tests/"]
     }
 }

@@ -27,31 +27,10 @@ use OpenGraphProtocol;
  */
 class BackwardCompatibilityTest extends PHPUnit_Framework_TestCase
 {
-    protected function setUp()
+    public function setup()
     {
-        /* if not yet included, include backward compatibility code and veryify deprication warning. */
-        if (!class_exists('OpenGraphProtocol', false)) {
-            $errorHistory = array();
-            $packageRoot  = __FILE__;
-            for ($i = 0; $i < 3; $i++) {
-                $packageRoot = dirname($packageRoot);
-            }
-            set_error_handler(function ($errno, $errstr, $errfile, $errline) use (&$errorHistory) {
-                $errorHistory[] = array($errno, $errstr, $errfile, $errline);
-            });
-            $includeFile = $packageRoot . DIRECTORY_SEPARATOR . 'media.php';
-            $this->assertTrue(file_exists($includeFile), "file exists {$includeFile}");
-            require $includeFile;
-            restore_error_handler();
-            $errorString = '';
-            foreach ($errorHistory as $event) {
-                $errorString .= "\n" . $this->errorLevelToString($event[0]) . ": {$event[1]} in {$event[2]}:{$event[3]}";
-            }
-            $expectedErrorMessage = 'Please configure NiallKennedy\\OpenGraphProtocolTools with your autoloader';
-            $this->assertCount( 1,                     $errorHistory,       "Expected error count{$errorString}"  );
-            $this->assertEquals(E_USER_DEPRECATED,     $errorHistory[0][0], "Expected error level{$errorString}"  );
-            $this->assertEquals($expectedErrorMessage, $errorHistory[0][1], "Expected error message{$errorString}");
-        }
+        $legacyLoader = new LegacyClassLoader();
+        $legacyLoader->testLoad($this);
     }
 
     public function createImage()
@@ -255,49 +234,5 @@ class BackwardCompatibilityTest extends PHPUnit_Framework_TestCase
             '<meta property="article:tag" content="football">' . "\n";
         $this->assertEquals($expectedPrefix, $prefix);
         $this->assertEquals($expectedMeta, $meta);
-    }
-
-    private function errorLevelToString($level)
-    {
-        $allConstants          = get_defined_constants(true);
-        $result                = array();
-        $errorLevels           = array();
-        $errorLevelsByBitCount = array();
-        foreach ($allConstants['Core'] as $name => $value) {
-            if (substr($name, 0, 2) == 'E_') {
-                $errorLevelsByBitCount[$this->countBits($value)][$value] = $name;
-            }
-        }
-        $bitCounts = array_keys($errorLevelsByBitCount);
-        rsort($bitCounts, SORT_NUMERIC);
-        foreach ($bitCounts as $eachBitCount) {
-            $map = $errorLevelsByBitCount[$eachBitCount];
-            foreach ($map as $value => $name) {
-                $errorLevels[$value] = $name;
-            }
-        }
-        $result = '';
-        foreach ($errorLevels as $value => $name) {
-            if (($level & $value) == $value) {
-                $result[] = $name;
-                $level -= $value;
-            }
-        }
-        if (($level != 0) || (count($result) == 0)) {
-            $result[] = $level;
-        }
-
-        return implode('|', $result);
-    }
-
-    private function countBits($x)
-    {
-        $x -= (($x >> 1) & 0x55555555);
-        $x = ((($x >> 2) & 0x33333333) + ($x & 0x33333333));
-        $x = ((($x >> 4) + $x) & 0x0f0f0f0f);
-        $x += ($x >> 8);
-        $x += ($x >> 16);
-
-        return($x & 0x0000003f);
     }
 }

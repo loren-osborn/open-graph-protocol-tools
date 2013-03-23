@@ -13,6 +13,8 @@ namespace NiallKennedy\OpenGraphProtocolTools\Legacy;
 use Exception;
 use ReflectionClass;
 
+use NiallKennedy\OpenGraphProtocolTools\Exceptions\Exception as OgptException;
+
 /**
  * Ploxy object to provide backward compatibility
  *
@@ -24,6 +26,7 @@ class BackwardCompatibility
 
     private $proxiedObject;
     private static $classCreationChecklist = array();
+    private static $objectIdToProxyObjMap = array();
 
     private static function getLegacyClassNameMap()
     {
@@ -50,19 +53,46 @@ class BackwardCompatibility
             throw new Exception('Internal error: unknown class: ' . get_class($objectToProxy));
         }
         $this->proxiedObject = $objectToProxy;
+        self::$objectIdToProxyObjMap[spl_object_hash($objectToProxy)] =  $this;
     }
+
+   public function __destruct()
+   {
+       unset(self::$objectIdToProxyObjMap[spl_object_hash($this->proxiedObject)]);
+   }
 
     public function __call($name, $arguments)
     {
         if (method_exists($this->proxiedObject, $name)) {
-            $cleanArgs = self::cleanProxyCallArgs(get_class($this->proxiedObject), $name, $arguments);
+            $cleanArgs = self::cleanProxyCallArgs(get_class($this->proxiedObject), $name, false, $arguments);
+            try {
+                $result = call_user_func_array(array($this->proxiedObject, $name), $cleanArgs);
+            } catch (OgptException $e) {
+                /* ignore OGPT exceptions */
+            }
 
-            return call_user_func_array(array($this->proxiedObject, $name), $cleanArgs);
+            return self::cleanProxyReturnValue(get_class($this->proxiedObject), $name, false, $result);
         }
         throw new Exception('No such method: ' . $name);
     }
 
-    private static function cleanProxyCallArgs($class, $method, $arguments)
+    protected static function callStaticInternal($name, $arguments, $className)
+    {
+        $inflectedName = self::inflectStaticMethodName($name);
+        if (method_exists($className, $inflectedName)) {
+            $cleanArgs = self::cleanProxyCallArgs($className, $name, true, $arguments);
+            try {
+                $result = forward_static_call_array(array($className, $inflectedName), $cleanArgs);
+            } catch (OgptException $e) {
+                /* ignore OGPT exceptions */
+            }
+
+            return self::cleanProxyReturnValue($className, $name, true, $result);
+        }
+        throw new Exception('No such method: ' . $name);
+    }
+
+    private static function cleanProxyCallArgs($class, $method, $static, $arguments)
     {
         $result = array();
         foreach ($arguments as $arg) {
@@ -72,20 +102,28 @@ class BackwardCompatibility
                 $result[] = $arg;
             }
         }
+        if (!$static && preg_match('/^set[A-Z]/', $method)) {
+            $classReflection = new ReflectionClass($class);
+            $methodReflection = $classReflection->getMethod($method);
+            if (($methodReflection->getNumberOfParameters() == 2) && (count($result) == 1)) {
+                // $result[1]: $autoTruncate
+                $result[1] = true;
+            }
+        }
 
         return $result;
     }
 
-    protected static function callStaticInternal($name, $arguments, $className)
+    private static function cleanProxyReturnValue($class, $method, $static, $value)
     {
-        $inflectedName = self::inflectStaticMethodName($name);
-        if (method_exists($className, $inflectedName)) {
-            $cleanArgs = self::cleanProxyCallArgs($className, $name, $arguments);
-            $result = forward_static_call_array(array($className, $inflectedName), $cleanArgs);
-
-            return $result;
+        if (
+            is_object($value) &&
+            array_key_exists(spl_object_hash($value), self::$objectIdToProxyObjMap)
+        ) {
+            $value = self::$objectIdToProxyObjMap[spl_object_hash($value)];
         }
-        throw new Exception('No such method: ' . $name);
+
+        return $value;
     }
 
     public static function createProxyClasses()
