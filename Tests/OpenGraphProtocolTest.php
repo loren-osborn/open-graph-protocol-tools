@@ -35,6 +35,15 @@ class OpenGraphProtocolTest extends PHPUnit_Framework_TestCase
         );
     }
 
+    public function testClassConstants()
+    {
+        $this->assertEquals('1.99.0',            OpenGraphProtocol::VERSION,     'expected value');
+        $this->assertEquals(false,               OpenGraphProtocol::VERIFY_URLS, 'expected value');
+        $this->assertEquals('property',          OpenGraphProtocol::META_ATTR,   'expected value');
+        $this->assertEquals('og',                OpenGraphProtocol::PREFIX,      'expected value');
+        $this->assertEquals('http://ogp.me/ns#', OpenGraphProtocol::NS,          'expected value');
+    }
+
     public function testBuildHTML()
     {
         $this->assertNull(OpenGraphProtocol::buildHTML(array()), 'Empty array gives null');
@@ -615,9 +624,6 @@ class OpenGraphProtocolTest extends PHPUnit_Framework_TestCase
         }
     }
 
-    /**
-     * @ dataProvider getMediaToAdd
-     */
     public function getMediaToAdd()
     {
         return array(

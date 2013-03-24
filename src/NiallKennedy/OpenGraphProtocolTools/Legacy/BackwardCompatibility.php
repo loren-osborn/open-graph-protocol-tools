@@ -121,6 +121,10 @@ class BackwardCompatibility
             array_key_exists(spl_object_hash($value), self::$objectIdToProxyObjMap)
         ) {
             $value = self::$objectIdToProxyObjMap[spl_object_hash($value)];
+        } elseif (is_array($value)) {
+            foreach (array_keys($value) as $key) {
+                $value[$key] = self::cleanProxyReturnValue($class, $method, $static, $value[$key]);
+            }
         }
 
         return $value;

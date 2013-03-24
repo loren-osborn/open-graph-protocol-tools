@@ -21,12 +21,6 @@ use OpenGraphProtocol;
  */
 class LegacyOpenGraphProtocolTest extends PHPUnit_Framework_TestCase
 {
-    public function setup()
-    {
-        $legacyLoader = new LegacyClassLoader();
-        $legacyLoader->testLoad($this);
-    }
-
     /* self-shunting entry point for OpenGraphProtocol::buildHTML() */
     public function toArray()
     {
@@ -37,6 +31,21 @@ class LegacyOpenGraphProtocolTest extends PHPUnit_Framework_TestCase
                 'nesting'   => array('deep', 'enough')
             )
         );
+    }
+
+    public function setup()
+    {
+        $legacyLoader = new LegacyClassLoader();
+        $legacyLoader->testLoad($this);
+    }
+
+    public function testClassConstants()
+    {
+        $this->assertEquals('1.99.0',            OpenGraphProtocol::VERSION,     'expected value');
+        $this->assertEquals(false,               OpenGraphProtocol::VERIFY_URLS, 'expected value');
+        $this->assertEquals('property',          OpenGraphProtocol::META_ATTR,   'expected value');
+        $this->assertEquals('og',                OpenGraphProtocol::PREFIX,      'expected value');
+        $this->assertEquals('http://ogp.me/ns#', OpenGraphProtocol::NS,          'expected value');
     }
 
     public function testBuildHTML()
@@ -603,15 +612,12 @@ class LegacyOpenGraphProtocolTest extends PHPUnit_Framework_TestCase
         }
     }
 
-    /**
-     * @ dataProvider getMediaToAdd
-     */
     public function getMediaToAdd()
     {
         return array(
-            array('NiallKennedy\\OpenGraphProtocolTools\\Media\\Image', 'png', 'image'),
-            array('NiallKennedy\\OpenGraphProtocolTools\\Media\\Audio', 'mp3', 'audio'),
-            array('NiallKennedy\\OpenGraphProtocolTools\\Media\\Video', 'mov', 'video')
+            array('OpenGraphProtocolImage', 'png', 'image'),
+            array('OpenGraphProtocolAudio', 'mp3', 'audio'),
+            array('OpenGraphProtocolVideo', 'mov', 'video')
         );
     }
 
