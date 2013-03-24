@@ -19,6 +19,27 @@ use PHPUnit_Framework_TestCase;
  */
 abstract class OpenGraphProtocolTestBase extends PHPUnit_Framework_TestCase
 {
+    abstract protected function callStaticBuildHTML();
+
+    abstract protected function callStaticSupportedTypes();
+
+    abstract protected function callStaticSupportedLocales();
+
+    abstract protected function callStaticIsValidUrl();
+
+    abstract protected function createOpenGraphProtocol();
+
+    abstract protected function getOpenGraphProtocolConstant($name);
+
+    abstract protected function expectFailure($operation, $failure);
+
+    abstract protected function getMediaToAdd();
+
+    /**
+     * @dataProvider getLengthLimitedProperties
+     */
+    abstract public function testDefaultLengthLimitedPropertyTruncation($setter, $getter, $humanReadable, $property, $maxLength);
+
     /* self-shunting entry point for testBuildHTML() */
     public function toArray()
     {
@@ -39,18 +60,6 @@ abstract class OpenGraphProtocolTestBase extends PHPUnit_Framework_TestCase
         $this->assertEquals('og',                $this->getOpenGraphProtocolConstant('PREFIX'),      'expected value');
         $this->assertEquals('http://ogp.me/ns#', $this->getOpenGraphProtocolConstant('NS'),          'expected value');
     }
-
-    abstract protected function callStaticBuildHTML();
-
-    abstract protected function callStaticSupportedTypes();
-
-    abstract protected function callStaticSupportedLocales();
-
-    abstract protected function callStaticIsValidUrl();
-
-    abstract protected function createOpenGraphProtocol();
-
-    abstract protected function getOpenGraphProtocolConstant($name);
 
     public function testBuildHTML()
     {
@@ -546,13 +555,6 @@ abstract class OpenGraphProtocolTestBase extends PHPUnit_Framework_TestCase
         );
     }
 
-    abstract protected function expectFailure($operation, $failure);
-
-    /**
-     * @dataProvider getLengthLimitedProperties
-     */
-    abstract public function testDefaultLengthLimitedPropertyTruncation($setter, $getter, $humanReadable, $property, $maxLength);
-
     /**
      * @dataProvider getLengthLimitedProperties
      */
@@ -639,8 +641,6 @@ abstract class OpenGraphProtocolTestBase extends PHPUnit_Framework_TestCase
             $this->assertEquals('<meta property="' . $property . '" content="' . $validString . '">', $ogpt->toHTML(), 'correct value');
         }
     }
-
-    abstract protected function getMediaToAdd();
 
     /**
      * @dataProvider getMediaToAdd

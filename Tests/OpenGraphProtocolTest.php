@@ -63,6 +63,15 @@ class OpenGraphProtocolTest extends OpenGraphProtocolTestBase
         }
     }
 
+    public function getMediaToAdd()
+    {
+        return array(
+            array('NiallKennedy\\OpenGraphProtocolTools\\Media\\Image', 'png', 'image'),
+            array('NiallKennedy\\OpenGraphProtocolTools\\Media\\Audio', 'mp3', 'audio'),
+            array('NiallKennedy\\OpenGraphProtocolTools\\Media\\Video', 'mov', 'video')
+        );
+    }
+
     /**
      * @dataProvider getLengthLimitedProperties
      */
@@ -79,14 +88,5 @@ class OpenGraphProtocolTest extends OpenGraphProtocolTestBase
             $this->assertEquals(ucfirst($humanReadable) . ' too long: \'' . str_repeat('b', ($maxLength + 1)) . '\'', $e->getMessage(), 'correct exception');
         }
         $this->assertEquals(str_repeat('a', $maxLength), $ogpt->$getter(), 'did not change');
-    }
-
-    public function getMediaToAdd()
-    {
-        return array(
-            array('NiallKennedy\\OpenGraphProtocolTools\\Media\\Image', 'png', 'image'),
-            array('NiallKennedy\\OpenGraphProtocolTools\\Media\\Audio', 'mp3', 'audio'),
-            array('NiallKennedy\\OpenGraphProtocolTools\\Media\\Video', 'mov', 'video')
-        );
     }
 }

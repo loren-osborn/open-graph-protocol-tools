@@ -11,6 +11,7 @@
 namespace NiallKennedy\OpenGraphProtocolTools\Tests\Legacy;
 
 use OpenGraphProtocol;
+
 use NiallKennedy\OpenGraphProtocolTools\Tests\OpenGraphProtocolTestBase;
 
 /**
@@ -80,6 +81,15 @@ class LegacyOpenGraphProtocolTest extends OpenGraphProtocolTestBase
         $operation();
     }
 
+    public function getMediaToAdd()
+    {
+        return array(
+            array('OpenGraphProtocolImage', 'png', 'image'),
+            array('OpenGraphProtocolAudio', 'mp3', 'audio'),
+            array('OpenGraphProtocolVideo', 'mov', 'video')
+        );
+    }
+
     /**
      * @dataProvider getLengthLimitedProperties
      */
@@ -88,14 +98,5 @@ class LegacyOpenGraphProtocolTest extends OpenGraphProtocolTestBase
         $ogpt = new OpenGraphProtocol();
         $this->assertEquals($ogpt->$setter(str_repeat('c', ($maxLength + 1))), $ogpt, 'should return self');
         $this->assertEquals(str_repeat('c', $maxLength), $ogpt->$getter(), 'correct value');
-    }
-
-    public function getMediaToAdd()
-    {
-        return array(
-            array('OpenGraphProtocolImage', 'png', 'image'),
-            array('OpenGraphProtocolAudio', 'mp3', 'audio'),
-            array('OpenGraphProtocolVideo', 'mov', 'video')
-        );
     }
 }
