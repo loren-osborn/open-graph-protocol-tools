@@ -12,6 +12,7 @@ namespace NiallKennedy\OpenGraphProtocolTools\Legacy;
 
 use Exception;
 use ReflectionClass;
+use ReflectionProperty;
 
 use NiallKennedy\OpenGraphProtocolTools\Exceptions\Exception as OgptException;
 
@@ -25,6 +26,7 @@ class BackwardCompatibility
     const PACKAGE_NAMESPACE = 'NiallKennedy\\OpenGraphProtocolTools';
 
     private $proxiedObject;
+    private $proxiedClass;
     private static $classCreationChecklist = array();
     private static $objectIdToProxyObjMap = array();
 
@@ -46,13 +48,17 @@ class BackwardCompatibility
         );
     }
 
-    protected function __construct($objectToProxy)
+    protected function __construct($objectToProxy, $proxyClassName)
     {
         $legacyClassNameMap = self::getLegacyClassNameMap();
-        if (!array_key_exists(get_class($objectToProxy), $legacyClassNameMap)) {
-            throw new Exception('Internal error: unknown class: ' . get_class($objectToProxy));
+        if (!array_key_exists($proxyClassName, $legacyClassNameMap)) {
+            throw new Exception("Internal error: unknown class: $proxyClassName");
+        }
+        if (!($objectToProxy instanceof $proxyClassName)) {
+            throw new Exception("Internal error: object not member of $proxyClassName");
         }
         $this->proxiedObject = $objectToProxy;
+        $this->proxiedClass  = $proxyClassName;
         self::$objectIdToProxyObjMap[spl_object_hash($objectToProxy)] =  $this;
     }
 
@@ -64,14 +70,33 @@ class BackwardCompatibility
     public function __call($name, $arguments)
     {
         if (method_exists($this->proxiedObject, $name)) {
-            $cleanArgs = self::cleanProxyCallArgs(get_class($this->proxiedObject), $name, false, $arguments);
+            $cleanArgs = self::cleanProxyCallArgs($this->proxiedClass, $name, false, $arguments);
+            $myProperties = get_object_vars($this);
+            foreach ($myProperties as $propName => $propVal) {
+                if (!preg_match('/^proxied(Object|Class)$/', $propName)) {
+                    if (method_exists($this->proxiedObject, 'set' . ucfirst($propName))) {
+                        call_user_func_array(array($this->proxiedObject, 'set' . ucfirst($propName)), array($propVal));
+                    } else {
+                        $this->proxiedObject->$propName = $propVal;
+                    }
+                }
+            }
             try {
                 $result = call_user_func_array(array($this->proxiedObject, $name), $cleanArgs);
             } catch (OgptException $e) {
                 /* ignore OGPT exceptions */
             }
+            foreach (array_keys($myProperties) as $propName) {
+                if (!preg_match('/^proxied(Object|Class)$/', $propName)) {
+                    if (method_exists($this->proxiedObject, 'get' . ucfirst($propName))) {
+                        $this->$propName = call_user_func_array(array($this->proxiedObject, 'get' . ucfirst($propName)), array());
+                    } else {
+                        $this->$propName = $this->proxiedObject->$propName;
+                    }
+                }
+            }
 
-            return self::cleanProxyReturnValue(get_class($this->proxiedObject), $name, false, $result);
+            return self::cleanProxyReturnValue($this->proxiedClass, $name, false, $result);
         }
         throw new Exception('No such method: ' . $name);
     }
@@ -151,25 +176,77 @@ class BackwardCompatibility
             }
             $parent = $legacyClassNameMap[$parentClassName];
         }
-        $abstract  = $reflection->isAbstract() ? 'abstract' : '';
+        $abstract          = '';
+        $concreteClassName = $className;
+        $concreteClassDef  = '';
+        if ($reflection->isAbstract()) {
+            $abstract  = 'abstract ';
+        }
+        $protectedPropertyList = $reflection->getProperties(ReflectionProperty::IS_PROTECTED);
+        $accessors = array();
+        if ($reflection->isAbstract() || (count($protectedPropertyList) > 0)) {
+            foreach ($protectedPropertyList as $propRef) {
+                if (!($reflection->hasMethod('get' . ucfirst($propRef->getName())))) {
+                    $accessors[] =
+                        "\t\t\t" . 'public function get' . ucfirst($propRef->getName()) . '() {' . "\n" .
+                            "\t\t\t\t" . 'return $this->' . $propRef->getName() . ';' . "\n" .
+                        "\t\t\t" . '}' . "\n";
+                }
+                if (!($reflection->hasMethod('set' . ucfirst($propRef->getName())))) {
+                    $accessors[] =
+                        "\t\t\t" . 'public function set' . ucfirst($propRef->getName()) . '($val) {' . "\n" .
+                            "\t\t\t\t" . '$this->' . $propRef->getName() . ' = $val;' . "\n" .
+                        "\t\t\t" . '}' . "\n";
+                }
+            }
+        }
+        if ($reflection->isAbstract() || (count($accessors) > 0)) {
+            $classNameParts = explode('\\', $className);
+            if (count($classNameParts) > 1) {
+                $concreteClassNamespace = implode('\\', array_merge(
+                    array_slice($classNameParts, 0, 2),
+                    array('Legacy'),
+                    array_slice($classNameParts, 2, -1)
+                ));
+                $concreteClassShortName = 'Proxyable' . $classNameParts[count($classNameParts) - 1];
+                $concreteClassName      = $concreteClassNamespace . '\\' . $concreteClassShortName;
+                $concreteClassDef       =
+                    "namespace {$concreteClassNamespace} " . '{' . "\n" .
+                        "\tclass {$concreteClassShortName} extends \\{$className} " . '{' . "\n" .
+                            implode("\n", $accessors) . ' ' .
+                        "\t" . '}' . "\n" .
+                    '}' . "\n\n";
+                $codePrefix  = 'namespace {' . "\n";
+                $codeSuffix  = "\n" . '}';
+            } else {
+                throw new Exception("Internal error: We shouldn't be proxying a class outside a namespace");
+            }
+        }
         $constants = '';
         foreach ($reflection->getConstants() as $constName => $constValue) {
-            $constants .= "const {$constName} = " . var_export($constValue, true) . '; ';
+            $constants .= "\t\tconst {$constName} = " . var_export($constValue, true) . ';' . "\n";
+        }
+        if ($constants != '') {
+            $constants .= "\n";
         }
         $compatibilityClassSource =
-            "{$abstract} class {$legacyClassName} extends {$parent}" .
-            '{ ' .
-                $constants .
-                /* No legacy classes have constructors that take arguments. */
-                'public function __construct() ' .
-                '{' .
-                    __CLASS__ . '::__construct(new ' . $className . '());' .
-                '} ' .
-                'static public function __callStatic($name, $arguments) ' .
-                '{' .
-                    'return ' . __CLASS__ . '::callStaticInternal($name, $arguments, \'' . preg_replace('/\\\\/', '\\\\', $className) . '\');' .
-                '}' .
+            $concreteClassDef .
+            'namespace {' . "\n" .
+                "\t{$abstract}class {$legacyClassName} extends {$parent}\n" .
+                "\t" .'{' . "\n" .
+                    $constants .
+                    /* No legacy classes have constructors that take arguments. */
+                    "\t\t" . 'public function __construct()' . "\n" .
+                    "\t\t" . '{' . "\n" .
+                        "\t\t\t" . __CLASS__ . '::__construct(new ' . $concreteClassName . "(), '" . str_replace('\\', '\\\\', $className) . "');\n" .
+                    "\t\t" . '}' . "\n\n" .
+                    "\t\t" . 'static public function __callStatic($name, $arguments)' . "\n" .
+                    "\t\t" . '{' . "\n" .
+                        "\t\t\t" . 'return ' . __CLASS__ . '::callStaticInternal($name, $arguments, \'' . preg_replace('/\\\\/', '\\\\', $className) . '\');' . "\n" .
+                    "\t\t" . '}' . "\n" .
+                "\t" . '}' . "\n" .
             '}';
+        $compatibilityClassSource = str_replace("\t", '    ', $compatibilityClassSource);
         eval($compatibilityClassSource);
         self::$classCreationChecklist[$className] = true;
     }

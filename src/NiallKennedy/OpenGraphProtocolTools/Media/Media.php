@@ -86,7 +86,7 @@ abstract class Media
             }
         }
         if (!$valid) {
-            throw new Exception("invalid url: " . var_export($origUrl, true));
+            throw new Exception("Invalid url: " . var_export($origUrl, true));
         }
 
         return $this;
@@ -135,7 +135,7 @@ abstract class Media
             }
         }
         if (!$valid) {
-            throw new Exception("invalid url: " . var_export($origUrl, true));
+            throw new Exception("Invalid secure url: " . var_export($origUrl, true));
         }
 
         return $this;

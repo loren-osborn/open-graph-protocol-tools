@@ -8,14 +8,14 @@
  * @copyright Public Domain
  */
 
-namespace NiallKennedy\OpenGraphProtocolTools\Tests\Media;
+namespace NiallKennedy\OpenGraphProtocolTools\Tests\Legacy\Media;
 
 use ReflectionClass;
 
-use NiallKennedy\OpenGraphProtocolTools\Media\Media;
-use NiallKennedy\OpenGraphProtocolTools\Exceptions\Exception as OgptException;
+use OpenGraphProtocolMedia;
+use NiallKennedy\OpenGraphProtocolTools\Tests\Media\MediaTestBase;
 
-class TestMediaObject extends Media
+class TestMediaObject extends OpenGraphProtocolMedia
 {
     public $foo;
 
@@ -30,7 +30,7 @@ class TestMediaObject extends Media
  *
  * @author Loren Osborn <loren.osborn@hautelook.com>
  */
-class MediaTest extends MediaTestBase
+class LegacyMediaTest extends MediaTestBase
 {
     protected function createTestMediaObject()
     {
@@ -39,18 +39,12 @@ class MediaTest extends MediaTestBase
 
     protected function expectFailure($operation, $failure)
     {
-        try {
-            $operation();
-            $this->fail('expected invalid type exception');
-        } catch (OgptException $e) {
-            $this->assertInstanceOf('NiallKennedy\OpenGraphProtocolTools\Exceptions\Exception', $e, 'correct exception');
-            $this->assertEquals($failure, $e->getMessage(), 'correct exception');
-        }
+        $operation();
     }
 
     public function testBaseClassAbstract()
     {
-        $reflection = new ReflectionClass('NiallKennedy\\OpenGraphProtocolTools\\Media\\Media');
+        $reflection = new ReflectionClass('OpenGraphProtocolMedia');
         $this->assertTrue($reflection->isAbstract(), 'should be abstract');
     }
 }
