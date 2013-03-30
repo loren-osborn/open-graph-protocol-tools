@@ -17,7 +17,7 @@ use ReflectionProperty;
 use NiallKennedy\OpenGraphProtocolTools\Exceptions\Exception as OgptException;
 
 /**
- * Ploxy object to provide backward compatibility
+ * Proxy object to provide backward compatibility
  *
  * @author Loren Osborn <loren.osborn@hautelook.com>
  */
