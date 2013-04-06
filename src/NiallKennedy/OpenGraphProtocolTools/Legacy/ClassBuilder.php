@@ -21,7 +21,8 @@ class ClassBuilder
 {
     private $className;
     private $parentClass;
-    
+    private $constants;
+
     public static function parseClassName($className)
     {
         $classNameParts = explode('\\', $className);
@@ -35,14 +36,16 @@ class ClassBuilder
             $result['baseClassName']  = $className;
             $result['vendorPrefix']   = 'Global';
         }
+
         return $result;
     }
-    
+
     public function __construct($className)
     {
         $this->className = $className;
+        $this->constants = array();
     }
-    
+
     public function setParent($className)
     {
         $generator = ClassGenerator::getBuilderOwner($this);
@@ -56,54 +59,75 @@ class ClassBuilder
         }
         $this->parentClass = $className;
     }
-    
+
     public function getParent()
     {
         return $this->parentClass;
     }
-    
+
     public function getBaseClassName()
     {
         $parsed = self::parseClassName($this->className);
+
         return $parsed['baseClassName'];
     }
-    
+
     public function getClassName()
     {
         return $this->className;
     }
-    
+
     public function getNamespace()
     {
         $parsed = self::parseClassName($this->className);
+
         return $parsed['classNamespace'];
     }
-    
+
     public function getUsedClasses()
     {
         $myNamespace = $this->getNamespace();
-        $usedClasses = array();
-        if (!empty($this->parentClass)) {
-            $usedClasses[] = $this->parentClass;
-        }
         $result = array();
-        foreach ($usedClasses as $className) {
-            $parsed = self::parseClassName($className);
-            if ($myNamespace != $parsed['classNamespace']) {
-                $result[] = $className;
-            }
+        if (!empty($this->parentClass)) {
+            $result[] = $this->parentClass;
         }
+
         return $result;
     }
-    
+
     public function getSource($indent = '', $useClassMap = array())
     {
+        $constants = '';
+        foreach ($this->constants as $name => $value) {
+            $constants .= "{$indent}    const {$name} = " . var_export($value, true) . ";\n";
+        }
         $result = "{$indent}class " . $this->getBaseClassName();
         if (!empty($this->parentClass)) {
             $result .= ' extends ' . $useClassMap[$this->parentClass]['alias'];
         }
-        $result .= "\n{$indent}" . '{' . "\n{$indent}" . '}';
+        $result .= "\n{$indent}" . '{' . "\n{$constants}{$indent}" . '}';
 
         return $result;
+    }
+
+    public function addConstants($constants)
+    {
+        foreach ($constants as $name => $value) {
+            if (!preg_match('/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/', $name)) {
+                throw new NativePhpException("\"{$name}\" is not a valid constant name");
+            }
+            if (!(
+                is_string($value) ||
+                is_numeric($value) ||
+                is_bool($value) ||
+                is_null($value)
+            )) {
+                throw new NativePhpException("Constant $name is not a valid constant type");
+            }
+            if (array_key_exists($name, $this->constants)) {
+                throw new NativePhpException("Constant $name is already defined");
+            }
+        }
+        $this->constants = array_merge($this->constants, $constants);
     }
 }

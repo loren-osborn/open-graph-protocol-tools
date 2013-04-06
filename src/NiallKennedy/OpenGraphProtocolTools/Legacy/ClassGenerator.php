@@ -12,8 +12,6 @@ namespace NiallKennedy\OpenGraphProtocolTools\Legacy;
 
 use Exception as NativePhpException;
 
-use NiallKennedy\OpenGraphProtocolTools\Exceptions\Exception as OgptException;
-
 /**
  * Class to generate custom classes
  *
@@ -22,20 +20,20 @@ use NiallKennedy\OpenGraphProtocolTools\Exceptions\Exception as OgptException;
 class ClassGenerator
 {
     private $classMap = array();
-    static private $ownerMap = array();
-    
+    private static $ownerMap = array();
+
     public function __destruct()
     {
         foreach ($this->classMap as $obj) {
             unset(self::$ownerMap[spl_object_hash($obj)]);
         }
     }
-    
-    static public function getBuilderOwner($builder)
+
+    public static function getBuilderOwner($builder)
     {
         return self::$ownerMap[spl_object_hash($builder)];
     }
-    
+
     public function getClassBuilder($className)
     {
         if (class_exists($className, true)) {
@@ -45,17 +43,19 @@ class ClassGenerator
             $this->classMap[$className] = new ClassBuilder($className);
             self::$ownerMap[spl_object_hash($this->classMap[$className])] = $this;
         }
+
         return $this->classMap[$className];
     }
-    
+
     public function isClassDefined($className)
     {
         if (class_exists($className, true)) {
             return true;
         }
+
         return array_key_exists($className, $this->classMap);
     }
-    
+
     public function getSource()
     {
         $namespaceHunks = $this->getOrderedNamespaceHunks();
@@ -82,25 +82,28 @@ class ClassGenerator
             $usedClasses = array();
             $classSources = array();
             foreach ($currentNamespaceHunk as $className => $builder) {
-                $usedClasses = array_merge($usedClasses, $builder->getUsedClasses());
+                $eachUsedClasses = $builder->getUsedClasses();
+                $usedClasses = array_merge($usedClasses, $eachUsedClasses);
             }
-            $usedClasses = $this->getUseClassMap($usedClasses, $currentNamespace);
+            $usedClasses = $this->getUseClassMap($usedClasses, $currentNamespaceHunk);
             foreach ($currentNamespaceHunk as $className => $builder) {
                 $classSources[] = $builder->getSource($indent, $usedClasses);
             }
             $usedDeclarations = array();
             $lastClassInfo = null;
             foreach ($usedClasses as $className => $usedClassInfo) {
-                $declaration = "{$indent}use {$className}";
-                if (!empty($usedClassInfo['explicitAlias'])) {
-                    $declaration .= " as {$usedClassInfo['explicitAlias']}";
+                if (!$usedClassInfo['skipDeclaration']) {
+                    $declaration = "{$indent}use {$className}";
+                    if (!empty($usedClassInfo['explicitAlias'])) {
+                        $declaration .= " as {$usedClassInfo['explicitAlias']}";
+                    }
+                    $declaration .= ';';
+                    if ($lastClassInfo && ($lastClassInfo['vendorPrefix'] != $usedClassInfo['vendorPrefix'])) {
+                        $declaration = "\n{$declaration}";
+                    }
+                    $usedDeclarations[] = $declaration;
+                    $lastClassInfo = $usedClassInfo;
                 }
-                $declaration .= ';';
-                if ($lastClassInfo && ($lastClassInfo['vendorPrefix'] != $usedClassInfo['vendorPrefix'])) {
-                    $declaration = "\n{$declaration}";
-                }
-                $usedDeclarations[] = $declaration;
-                $lastClassInfo = $usedClassInfo;
             }
             $usedDeclarations = join("\n", $usedDeclarations);
             if (!empty($usedDeclarations)) {
@@ -115,62 +118,84 @@ class ClassGenerator
             }
             $namespaceCodeBlocks[] = join($classSources, "\n");
         }
+
         return join($namespaceCodeBlocks, "\n\n");
     }
-    
-    private function getUseClassMap($usedClasses, $namespace)
+
+    private function getUseClassMap($usedClasses, $hunkClasses)
     {
+        $orderedHunkClasses = array_values($hunkClasses);
+        $namespace = $orderedHunkClasses[0]->getNamespace();
         $result = array();
         $parsedMap = array();
         $collisionMap = array();
+        $hunkCollisionMap = array();
         $vendorMap = array();
         $usedClasses = array_unique($usedClasses);
+        foreach ($hunkClasses as $className => $builder) {
+            $hunkCollisionMap[$builder->getBaseClassName()][] = $builder;
+        }
         foreach ($usedClasses as $className) {
             $parsedClassName = ClassBuilder::parseClassName($className);
-            $vendorMap[$parsedClassName['vendorPrefix']][] = $className;
-            $collisionMap[$parsedClassName['baseClassName']][] = $className;
             $parsedMap[$className] = $parsedClassName;
             $parsedMap[$className]['alias'] = null;
+            $parsedMap[$className]['forceAbsolute'] = false;
+            $vendorMap[$parsedMap[$className]['vendorPrefix']][] = $className;
+            if ($parsedMap[$className]['classNamespace'] == $namespace) {
+                if (!array_key_exists($parsedMap[$className]['baseClassName'], $hunkCollisionMap)) {
+                    $hunkCollisionMap[$parsedMap[$className]['baseClassName']] = true;
+                }
+            } else {
+                $collisionMap[$parsedMap[$className]['baseClassName']][] = $className;
+            }
         }
         foreach ($collisionMap as $colidedClasses) {
-            if (count($colidedClasses) > 1) {
+            if (
+                (count($colidedClasses) > 1) ||
+                array_key_exists($parsedMap[$colidedClasses[0]]['baseClassName'], $hunkCollisionMap)
+            ) {
                 $depth = 1;
                 $resolved = false;
                 while (!$resolved) {
                     $trialCollisionMap = array();
                     $resolved = true;
                     $maxDeltaDepth = null;
-                    foreach ($colidedClasses as $index => $className) {
-                        $depthDelta = count($parsedMap[$className]['classNameParts']) - (1 + $depth);
-                        if ($depthDelta >= 0) {
-                            $depthSlice = array_slice($parsedMap[$className]['classNameParts'], 0 - ($depth + 1), 1);
-                            $depthName = $depthSlice[0] . $parsedMap[$className]['baseClassName'];
-                        } elseif ($depthDelta == -1) {
-                            $depthName = 'Global' . $parsedMap[$className]['baseClassName'];
-                        } elseif ($depthDelta == -2) {
-                            $depthName = 'Global' . $index . $parsedMap[$className]['baseClassName'];
-                        } elseif ($depthDelta <= -3) {
-                            $depthName = join('', $parsedMap[$className]['classNameParts']);
-                        }
+                    foreach ($colidedClasses as $className) {
+                        $depthDelta = count($parsedMap[$className]['classNameParts']) - ($depth + 1);
                         if (is_null($maxDeltaDepth) || ($maxDeltaDepth < $depthDelta)) {
                             $maxDeltaDepth = $depthDelta;
                         }
-                        if (array_key_exists($depthName, $collisionMap)) {
+                        if ($depthDelta >= 0) {
+                            $depthSlice = array_slice($parsedMap[$className]['classNameParts'], $depthDelta, 1);
+                            $depthName = $depthSlice[0] . $parsedMap[$className]['baseClassName'];
+                        } else {
+                            $depthName = '\\' . $className;
+                        }
+                        if (array_key_exists($depthName, $hunkCollisionMap)) {
+                            $resolved = false;
+                        } elseif (array_key_exists($depthName, $collisionMap)) {
                             $resolved = false;
                         } elseif (array_key_exists($depthName, $trialCollisionMap)) {
                             $resolved = false;
                         } elseif ($resolved) {
                             $trialCollisionMap[$depthName] = $className;
                         }
-                    } // classNameParts
-                    if ($maxDeltaDepth < -3) {
-                        throw new NativePhpException('Failed to resolve use class alias');
+                    }
+                    if ($maxDeltaDepth < 0) {
+                        foreach ($colidedClasses as $className) {
+                            $parsedMap[$className]['forceAbsolute'] = true;
+                        }
+                        $resolved = true;
                     } elseif ($resolved) {
                         foreach ($trialCollisionMap as $alias => $className) {
-                            $parsedMap[$className]['alias'] = $alias;
+                            if (preg_match('/^\\\\/', $alias)) {
+                                $parsedMap[$className]['forceAbsolute'] = true;
+                            } else {
+                                $parsedMap[$className]['alias'] = $alias;
+                            }
                         }
                     } else {
-                        $depth--;
+                        $depth++;
                     }
                 }
             }
@@ -178,21 +203,28 @@ class ClassGenerator
         foreach ($vendorMap as $vendorClasses) {
             foreach ($vendorClasses as $className) {
                 $usedClassInfo = array(
-                    'className'     => $className,
-                    'vendorPrefix'  => $parsedMap[$className]['vendorPrefix'],
-                    'alias'         => $parsedMap[$className]['baseClassName'],
-                    'explicitAlias' => null
+                    'className'       => $className,
+                    'vendorPrefix'    => $parsedMap[$className]['vendorPrefix'],
+                    'alias'           => $parsedMap[$className]['baseClassName'],
+                    'explicitAlias'   => null,
+                    'skipDeclaration' => false
                 );
-                if (!empty($parsedMap[$className]['alias'])) {
-                    $usedClassInfo['explicitAlias'] = $parsedMap[$className]['alias'];
-                    $usedClassInfo['alias']         = $parsedMap[$className]['alias'];
+                if ($parsedMap[$className]['classNamespace'] == $namespace) {
+                    $usedClassInfo['skipDeclaration'] = true;
+                } elseif ($parsedMap[$className]['forceAbsolute']) {
+                    $usedClassInfo['skipDeclaration'] = true;
+                    $usedClassInfo['alias']           = '\\' . $className;
+                } elseif (!empty($parsedMap[$className]['alias'])) {
+                    $usedClassInfo['explicitAlias']   = $parsedMap[$className]['alias'];
+                    $usedClassInfo['alias']           = $parsedMap[$className]['alias'];
                 }
                 $result[$className] = $usedClassInfo;
             }
         }
+
         return $result;
     }
-    
+
     private function getOrderedNamespaceHunks()
     {
         $namespaceHunks = array('map' => array(), 'orderedList' => array());
@@ -200,9 +232,10 @@ class ClassGenerator
         foreach ($this->classMap as $name => $builder) {
             $this->assignClassToNamespaceHunk($name, $alreadyTraversed, $namespaceHunks);
         }
+
         return $namespaceHunks['orderedList'];
     }
-    
+
     private function assignClassToNamespaceHunk($className, &$alreadyTraversed, &$namespaceHunks)
     {
         if (!array_key_exists($className, $alreadyTraversed) && array_key_exists($className, $this->classMap)) {
