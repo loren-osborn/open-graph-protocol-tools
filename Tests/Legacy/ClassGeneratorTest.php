@@ -12,6 +12,7 @@ namespace NiallKennedy\OpenGraphProtocolTools\Tests\Legacy;
 
 use PHPUnit_Framework_TestCase;
 use Exception as NativePhpException;
+use ReflectionProperty;
 
 use NiallKennedy\OpenGraphProtocolTools\Legacy\ClassGenerator;
 
@@ -424,5 +425,41 @@ class ClassGeneratorTest extends PHPUnit_Framework_TestCase
             $this->assertEquals('Exception', get_class($e), 'Native PHP Exception');
             $this->assertEquals('Constant HELLO_WORLD is already defined', $e->getMessage(), 'expected error');
         }
+    }
+
+    public function testAddProperties()
+    {
+        $generator = new ClassGenerator();
+        $classBuilder = $generator->getClassBuilder('HasProperties');
+        $classBuilder->addProperties(array(
+            'year' => array(),
+            'color' => array('visibility' => ReflectionProperty::IS_PRIVATE),
+            'flavor' => array('visibility' => ReflectionProperty::IS_PROTECTED, 'static' => false),
+            'name' => array('visibility' => ReflectionProperty::IS_PUBLIC),
+            'foo' => array('visibility' => ReflectionProperty::IS_PUBLIC, 'static' => true),
+            'fee' => array('visibility' => ReflectionProperty::IS_PUBLIC, 'initialValue' => 5),
+            'bar' => array('visibility' => ReflectionProperty::IS_PROTECTED, 'initialValue' => null),
+            'baz' => array('visibility' => ReflectionProperty::IS_PUBLIC, 'initialValue' => 'hello world'),
+            'boo' => array('visibility' => ReflectionProperty::IS_PRIVATE, 'initialValue' => array(1, 3, 5, 7))
+        ));
+        $expectedSource =
+            "class HasProperties\n" .
+            "{\n" .
+            "    \$year;\n" .
+            "    private \$color;\n" .
+            "    protected \$flavor;\n" .
+            "    public \$name;\n" .
+            "    public static \$foo;\n" .
+            "    public \$fee = 5;\n" .
+            "    protected \$bar = null;\n" .
+            "    public \$baz = 'hello world';\n" .
+            "    private \$boo = array (\n" .
+            "      0 => 1,\n" .
+            "      1 => 3,\n" .
+            "      2 => 5,\n" .
+            "      3 => 7,\n" .
+            "    );\n" .
+            "}";
+        $this->assertEquals($expectedSource, $generator->getSource(), 'expected');
     }
 }

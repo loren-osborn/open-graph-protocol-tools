@@ -11,6 +11,7 @@
 namespace NiallKennedy\OpenGraphProtocolTools\Legacy;
 
 use Exception as NativePhpException;
+use ReflectionProperty;
 
 /**
  * Class builder for class generator
@@ -22,6 +23,12 @@ class ClassBuilder
     private $className;
     private $parentClass;
     private $constants;
+    private $properties;
+    private $visibilityMap = array(
+        ReflectionProperty::IS_PRIVATE => 'private',
+        ReflectionProperty::IS_PROTECTED => 'protected',
+        ReflectionProperty::IS_PUBLIC => 'public'
+    );
 
     public static function parseClassName($className)
     {
@@ -44,6 +51,7 @@ class ClassBuilder
     {
         $this->className = $className;
         $this->constants = array();
+        $this->properties = array();
     }
 
     public function setParent($className)
@@ -97,15 +105,42 @@ class ClassBuilder
 
     public function getSource($indent = '', $useClassMap = array())
     {
+        $codeBlocks = array();
         $constants = '';
         foreach ($this->constants as $name => $value) {
             $constants .= "{$indent}    const {$name} = " . var_export($value, true) . ";\n";
+        }
+        if (!empty($constants)) {
+            $codeBlocks[] = $constants;
+        }
+        $properties = '';
+        foreach ($this->properties as $name => $details) {
+            $propPrefix = '';
+            $propSuffix = '';
+            if (array_key_exists('visibility', $details) && array_key_exists($details['visibility'], $this->visibilityMap)) {
+                $propPrefix .= $this->visibilityMap[$details['visibility']] . ' ';
+            }
+            if (array_key_exists('static', $details) && $details['static']) {
+                $propPrefix .= 'static ';
+            }
+            if (array_key_exists('initialValue', $details)) {
+                $value = var_export($details['initialValue'], true);
+                if (preg_match('/^(NULL|TRUE|FALSE)$/', $value)) {
+                    $value = strtolower($value);
+                }
+                $value = str_replace("\n", "\n{$indent}    ", $value);
+                $propSuffix .= " = $value";
+            }
+            $properties .= "{$indent}    {$propPrefix}\${$name}{$propSuffix};\n";
+        }
+        if (!empty($properties)) {
+            $codeBlocks[] = $properties;
         }
         $result = "{$indent}class " . $this->getBaseClassName();
         if (!empty($this->parentClass)) {
             $result .= ' extends ' . $useClassMap[$this->parentClass]['alias'];
         }
-        $result .= "\n{$indent}" . '{' . "\n{$constants}{$indent}" . '}';
+        $result .= "\n{$indent}" . '{' . "\n" . join ("\n", $codeBlocks) . "{$indent}" . '}';
 
         return $result;
     }
@@ -129,5 +164,18 @@ class ClassBuilder
             }
         }
         $this->constants = array_merge($this->constants, $constants);
+    }
+
+    public function addProperties($properties)
+    {
+        foreach ($properties as $name => $value) {
+            if (!preg_match('/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/', $name)) {
+                throw new NativePhpException("\"{$name}\" is not a valid constant name");
+            }
+            if (array_key_exists($name, $this->constants)) {
+                throw new NativePhpException("Constant $name is already defined");
+            }
+        }
+        $this->properties = array_merge($this->properties, $properties);
     }
 }
