@@ -20,10 +20,13 @@ use ReflectionProperty;
  */
 class ClassBuilder
 {
+    const VALID_SYMBOL_NAME_PATTERN = '[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*';
+
     private $className;
     private $parentClass;
     private $constants;
     private $properties;
+    private $methods;
     private $visibilityMap = array(
         ReflectionProperty::IS_PRIVATE => 'private',
         ReflectionProperty::IS_PROTECTED => 'protected',
@@ -49,9 +52,10 @@ class ClassBuilder
 
     public function __construct($className)
     {
-        $this->className = $className;
-        $this->constants = array();
+        $this->className  = $className;
+        $this->constants  = array();
         $this->properties = array();
+        $this->methods    = array();
     }
 
     public function setParent($className)
@@ -99,6 +103,20 @@ class ClassBuilder
         if (!empty($this->parentClass)) {
             $result[] = $this->parentClass;
         }
+        foreach ($this->methods as $name => $details) {
+            if (array_key_exists('arguments', $details) && $details['arguments']) {
+                foreach ($details['arguments'] as $arg) {
+                    $parsed = $this->getSnippitUseClassInfo($arg);
+                    $result = array_merge($result, $parsed['used_classes']);
+                }
+            }
+            if (array_key_exists('body', $details) && $details['body']) {
+                foreach ($details['body'] as $lines) {
+                    $parsed = $this->getSnippitUseClassInfo($lines[1]);
+                    $result = array_merge($result, $parsed['used_classes']);
+                }
+            }
+        }
 
         return $result;
     }
@@ -136,6 +154,36 @@ class ClassBuilder
         if (!empty($properties)) {
             $codeBlocks[] = $properties;
         }
+        foreach ($this->methods as $name => $details) {
+            $funcPrefix = '';
+            if (array_key_exists('visibility', $details) && array_key_exists($details['visibility'], $this->visibilityMap)) {
+                $funcPrefix .= $this->visibilityMap[$details['visibility']] . ' ';
+            }
+            if (array_key_exists('static', $details) && $details['static']) {
+                $funcPrefix .= 'static ';
+            }
+            $arguments = '';
+            if (array_key_exists('arguments', $details) && $details['arguments']) {
+                $cleanArgs = array();
+                foreach ($details['arguments'] as $arg) {
+                    $parsed = $this->getSnippitUseClassInfo($arg, $useClassMap);
+                    $cleanArgs[] = $parsed['snippit'];
+                }
+                $arguments = implode(', ', $cleanArgs);
+            }
+            $body = '';
+            if (array_key_exists('body', $details) && $details['body']) {
+                foreach ($details['body'] as $lines) {
+                    $parsed = $this->getSnippitUseClassInfo($lines[1], $useClassMap);
+                    $body .= "{$indent}" . str_repeat(' ', 4 * (2 + $lines[0])) . "{$parsed['snippit']}\n";
+                }
+            }
+            $codeBlocks[] =
+                "{$indent}    {$funcPrefix}function {$name}({$arguments})\n" .
+                "{$indent}    {\n" .
+                $body .
+                "{$indent}    }\n";
+        }
         $result = "{$indent}class " . $this->getBaseClassName();
         if (!empty($this->parentClass)) {
             $result .= ' extends ' . $useClassMap[$this->parentClass]['alias'];
@@ -148,7 +196,7 @@ class ClassBuilder
     public function addConstants($constants)
     {
         foreach ($constants as $name => $value) {
-            if (!preg_match('/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/', $name)) {
+            if (!preg_match('/^' . self::VALID_SYMBOL_NAME_PATTERN . '$/', $name)) {
                 throw new NativePhpException("\"{$name}\" is not a valid constant name");
             }
             if (!(
@@ -169,7 +217,7 @@ class ClassBuilder
     public function addProperties($properties)
     {
         foreach ($properties as $name => $value) {
-            if (!preg_match('/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/', $name)) {
+            if (!preg_match('/^' . self::VALID_SYMBOL_NAME_PATTERN . '$/', $name)) {
                 throw new NativePhpException("\"{$name}\" is not a valid constant name");
             }
             if (array_key_exists($name, $this->constants)) {
@@ -177,5 +225,45 @@ class ClassBuilder
             }
         }
         $this->properties = array_merge($this->properties, $properties);
+    }
+
+    public function addMethod($name, $details = array())
+    {
+        if (!preg_match('/^' . self::VALID_SYMBOL_NAME_PATTERN . '$/', $name)) {
+            throw new NativePhpException("\"{$name}\" is not a valid method name");
+        }
+        if (array_key_exists($name, $this->methods)) {
+            throw new NativePhpException("Method $name is already defined");
+        }
+        $this->methods[$name] = $details;
+    }
+
+    private function getSnippitUseClassInfo($snippit, $classMap = null)
+    {
+        $result = array('used_classes' => array());
+        $strReplaceMap = array('%%' => '%');
+        $funcClassPattern =
+            '/%(class|class_as_string):((' . self::VALID_SYMBOL_NAME_PATTERN . '\\\\)*' .
+            self::VALID_SYMBOL_NAME_PATTERN . ')%/';
+        $matches = array();
+        if (preg_match_all($funcClassPattern, $snippit, $matches, PREG_SET_ORDER)) {
+            foreach ($matches as $eachMatch) {
+                if ($eachMatch[1] == 'class') {
+                    $result['used_classes'][] = $eachMatch[2];
+                }
+                if (!empty($classMap)) {
+                    if ($eachMatch[1] == 'class') {
+                        $strReplaceMap[$eachMatch[0]] = $classMap[$eachMatch[2]]['alias'];
+                    } else {
+                        $strReplaceMap[$eachMatch[0]] = "'" . str_replace('\\', '\\\\', $eachMatch[2]) . "'";
+                    }
+                }
+            }
+        }
+        if (!is_null($classMap)) {
+            $result['snippit'] = str_replace(array_keys($strReplaceMap), array_values($strReplaceMap), $snippit);
+        }
+
+        return $result;
     }
 }

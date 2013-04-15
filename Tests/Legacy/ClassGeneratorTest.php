@@ -462,4 +462,77 @@ class ClassGeneratorTest extends PHPUnit_Framework_TestCase
             "}";
         $this->assertEquals($expectedSource, $generator->getSource(), 'expected');
     }
+
+    public function testAddMethod()
+    {
+        $generator = new ClassGenerator();
+        $classBuilder = $generator->getClassBuilder('HasMethods');
+        $classBuilder->addMethod('doNothing');
+        $expectedSource =
+            "class HasMethods\n" .
+            "{\n" .
+            "    function doNothing()\n" .
+            "    {\n" .
+            "    }\n" .
+            "}";
+        $this->assertEquals($expectedSource, $generator->getSource(), 'expected');
+        $classBuilder->addMethod('getHypotenuse', array(
+            'visibility' => ReflectionProperty::IS_PUBLIC,
+            'static' => true,
+            'arguments' => array('$side1', '$side2'),
+            'body' => array(
+                array(0, 'return sqrt(($side1*$side1) + ($side2*$side2));')
+            )
+        ));
+        $expectedSource =
+            "class HasMethods\n" .
+            "{\n" .
+            "    function doNothing()\n" .
+            "    {\n" .
+            "    }\n" .
+            "\n" .
+            "    public static function getHypotenuse(\$side1, \$side2)\n" .
+            "    {\n" .
+            "        return sqrt((\$side1*\$side1) + (\$side2*\$side2));\n" .
+            "    }\n" .
+            "}";
+        $this->assertEquals($expectedSource, $generator->getSource(), 'expected');
+        $classBuilder->addMethod('doSomethingWithClasses', array(
+            'visibility' => ReflectionProperty::IS_PRIVATE,
+            'arguments' => array('%class:Acme\\Widget\\Triangle% $triangle', '$count = 1'),
+            'body' => array(
+                array(0, '$someObject = %class:Food\\Fruit\\Apple%::getSomeObject($triangle);'),
+                array(0, 'if ($someObject->replaceMe($count)) {'),
+                array(1,     '$someObject = $someObject->getReplacement(%class_as_string:Food\\Carbs\\Bagel%, \'%%\');'),
+                array(0, '}'),
+                array(0, 'return $someObject;')
+            )
+        ));
+        $expectedSource =
+            "use Acme\\Widget\\Triangle;\n" .
+            "\n" .
+            "use Food\\Fruit\\Apple;\n" .
+            "\n" .
+            "class HasMethods\n" .
+            "{\n" .
+            "    function doNothing()\n" .
+            "    {\n" .
+            "    }\n" .
+            "\n" .
+            "    public static function getHypotenuse(\$side1, \$side2)\n" .
+            "    {\n" .
+            "        return sqrt((\$side1*\$side1) + (\$side2*\$side2));\n" .
+            "    }\n" .
+            "\n" .
+            "    private function doSomethingWithClasses(Triangle \$triangle, \$count = 1)\n" .
+            "    {\n" .
+            "        \$someObject = Apple::getSomeObject(\$triangle);\n" .
+            "        if (\$someObject->replaceMe(\$count)) {\n" .
+            "            \$someObject = \$someObject->getReplacement('Food\\\\Carbs\\\\Bagel', '%');\n" .
+            "        }\n" .
+            "        return \$someObject;\n" .
+            "    }\n" .
+            "}";
+        $this->assertEquals($expectedSource, $generator->getSource(), 'expected');
+    }
 }
